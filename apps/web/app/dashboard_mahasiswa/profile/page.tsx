@@ -724,7 +724,7 @@ export default function MahasiswaProfilePage() {
             <p className="profile-since-label">Bergabung Sejak</p>
             <p className="profile-since-value">{formatDate(profile.createdAt)}</p>
             <p className="profile-since-sub">
-              Sudah {getMemberDuration(profile.createdAt)} bersama Ruang Dosen
+              Sudah {getMemberDuration(profile.createdAt)} bersama AFADIA Academy
             </p>
           </div>
 

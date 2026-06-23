@@ -63,7 +63,7 @@ export default function AdminCreateUserPage() {
         <header className="top-bar">
           <div>
             <p className="page-title">Tambah Pengguna Baru</p>
-            <p className="page-subtitle">Daftarkan akun baru ke dalam sistem Ruang Dosen</p>
+            <p className="page-subtitle">Daftarkan akun baru ke dalam sistem AFADIA Academy</p>
           </div>
           <div className="top-bar-right">
             <Link href="/dashboard_admin/users" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '12px', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600 }}>
