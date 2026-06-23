@@ -76,9 +76,9 @@ export default function RegisterPage() {
       <header className="navbar">
         <div className="brand">AFADIA Academy</div>
         <nav className="nav-links">
-          <button onClick={() => alert("Pusat Bantuan:\n\n1. Hubungi admin@ruangdosen.ac.id untuk kendala pendaftaran.\n2. Baca panduan penggunaan setelah akun Anda aktif.\n3. Laporkan bug ke Tim IT Support.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Help</button>
+          <button onClick={() => alert("Pusat Bantuan:\n\n1. Hubungi admin@afadia.ac.id untuk kendala pendaftaran.\n2. Baca panduan penggunaan setelah akun Anda aktif.\n3. Laporkan bug ke Tim IT Support.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Help</button>
           <button onClick={() => alert("Tentang AFADIA Academy:\n\nAFADIA Academy adalah Platform Learning Management System (LMS) Terpadu untuk mahasiswa dan dosen dalam mengelola kelas, praktikum (Practical Lab), tugas, kuis, dan materi kuliah secara interaktif.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>About</button>
-          <button className="btn-support" onClick={() => alert("Hubungi Support:\n\nEmail: support@ruangdosen.ac.id\nWhatsApp: +62 812-3456-7890\nJam Operasional: Senin - Jumat, 08.00 - 17.00 WIB")}>Contact Support</button>
+          <button className="btn-support" onClick={() => alert("Hubungi Support:\n\nEmail: support@afadia.ac.id\nWhatsApp: +62 812-3456-7890\nJam Operasional: Senin - Jumat, 08.00 - 17.00 WIB")}>Contact Support</button>
         </nav>
       </header>
 

@@ -244,7 +244,7 @@ export default function DashboardMahasiswaPage() {
         </head>
         <body>
           <div class="header">
-            <div class="logo">Ruang<span>Dosen</span></div>
+            <div class="logo">AFADIA<span>Academy</span></div>
             <div style="text-align: right; font-size: 12px; color: #64748b;">
               Sistem Manajemen Akademik & Praktikum
             </div>
