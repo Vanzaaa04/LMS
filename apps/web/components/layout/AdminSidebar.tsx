@@ -69,7 +69,7 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
           </svg>
         </div>
         <span className="logo-text">
-          Ruang<span>Dosen</span>
+          AFADIA<span>Academy</span>
         </span>
       </div>
 
