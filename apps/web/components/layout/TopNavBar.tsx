@@ -157,9 +157,6 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
             <SearchIcon />
           </button>
 
-          <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors" aria-label="Toggle dark or light mode" title="Dark / Light Mode" type="button">
-            <ThemeModeIcon />
-          </button>
 
           {/* Notification Bell + Dropdown */}
           <div className="relative">

@@ -286,7 +286,9 @@ export async function createQuiz(payload: {
   xpReward: number;
   minimumScore: number;
   durationMinutes: number;
-  status?: string;
+  status: string;
+  maxAttempts?: number;
+  gradingMethod?: string;
 }): Promise<Quiz> {
   const { data } = await api.post("/quizzes", {
     title: payload.title,
@@ -294,7 +296,9 @@ export async function createQuiz(payload: {
     xpReward: payload.xpReward,
     passingScore: payload.minimumScore,
     timeLimit: payload.durationMinutes,
-    status: payload.status ?? "DRAFT",
+    status: payload.status,
+    maxAttempts: payload.maxAttempts,
+    gradingMethod: payload.gradingMethod,
   });
   return mapQuiz(data);
 }
@@ -307,6 +311,8 @@ export async function updateQuiz(
     minimumScore: number;
     durationMinutes: number;
     status: string;
+    maxAttempts: number;
+    gradingMethod: string;
   }>
 ): Promise<Quiz> {
   const body: Record<string, unknown> = {};
@@ -315,6 +321,8 @@ export async function updateQuiz(
   if (payload.minimumScore !== undefined) body.passingScore = payload.minimumScore;
   if (payload.durationMinutes !== undefined) body.timeLimit = payload.durationMinutes;
   if (payload.status !== undefined) body.status = payload.status;
+  if (payload.maxAttempts !== undefined) body.maxAttempts = payload.maxAttempts;
+  if (payload.gradingMethod !== undefined) body.gradingMethod = payload.gradingMethod;
 
   const { data } = await api.patch(`/quizzes/${quizId}`, body);
   return mapQuiz(data);

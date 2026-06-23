@@ -20,6 +20,8 @@ interface QuizCreateFormState {
   xpReward: number;
   minimumScore: number;
   durationMinutes: number;
+  maxAttempts: number;
+  gradingMethod: string;
 }
 
 const DEFAULT_FORM_STATE = {
@@ -29,6 +31,8 @@ const DEFAULT_FORM_STATE = {
   xpReward: 100,
   minimumScore: 70,
   durationMinutes: 60,
+  maxAttempts: 1,
+  gradingMethod: "LATEST",
 } satisfies QuizCreateFormState;
 
 export default function CreateQuizPage() {
@@ -131,6 +135,8 @@ function CreateQuizContent() {
         xpReward: formState.xpReward,
         minimumScore: formState.minimumScore,
         durationMinutes: formState.durationMinutes,
+        maxAttempts: formState.maxAttempts,
+        gradingMethod: formState.gradingMethod,
         status,
       });
 
@@ -233,6 +239,27 @@ function CreateQuizContent() {
                 suffix="min"
                 onChange={(value) => updateField("durationMinutes", value)}
               />
+            </div>
+            
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <NumberField
+                label="Max Attempts"
+                value={formState.maxAttempts}
+                min={1}
+                suffix="kali"
+                onChange={(value) => updateField("maxAttempts", value)}
+              />
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Grading Method</label>
+                <select
+                  value={formState.gradingMethod}
+                  onChange={(event) => updateField("gradingMethod", event.target.value)}
+                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="LATEST">Latest Attempt</option>
+                  <option value="HIGHEST">Highest Score</option>
+                </select>
+              </div>
             </div>
           </div>
 

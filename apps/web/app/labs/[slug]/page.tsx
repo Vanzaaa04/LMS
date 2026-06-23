@@ -294,33 +294,7 @@ function LabDynamicContent() {
     }
   };
 
-  const dummyDemos = [
-    {
-      id: 1,
-      week: "Minggu 2",
-      title: "Demo ke-1: Pengambilan & Implementasi Dasar",
-      material: "Materi: Pengenalan Sintaks Dasar, Variabel, dan Operator.",
-      status: "selesai" as const,
-      score: 95,
-    },
-    {
-      id: 2,
-      week: "Minggu 4",
-      title: "Demo ke-2: Validasi Struktur & Array Pointer",
-      material: "Materi: Pengelolaan Array Multidimensi dan Manipulasi String.",
-      status: "menunggu" as const,
-      score: null,
-    },
-    {
-      id: 3,
-      week: "Minggu 6",
-      title: "Demo ke-3: Review Kompilasi Akhir",
-      material: "Materi: Optimasi Program, Efisiensi Fungsi, dan Final Packaging.",
-      status: "belum" as const,
-      score: null,
-    },
-  ];
-
+  // Dummy demos removed
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 py-8 sm:px-6 lg:px-8 text-slate-800 space-y-6">
       {/* Header Breadcrumb */}
@@ -393,27 +367,10 @@ function LabDynamicContent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-3xl border border-slate-150 p-6 md:p-8 shadow-sm">
-            <div className="flex border-b border-slate-150 pb-1 mb-6">
-              <button
-                onClick={() => setActiveTab("tugas")}
-                className={`pb-3 px-4 font-bold text-xs uppercase tracking-wider transition-all border-b-2 mb-[-5px] flex items-center gap-2 ${
-                  activeTab === "tugas"
-                    ? "border-blue-600 text-blue-700"
-                    : "border-transparent text-slate-400 hover:text-slate-650"
-                }`}
-              >
-                <Calendar size={14} /> Tugas & Pengumpulan
-              </button>
-              <button
-                onClick={() => setActiveTab("demo")}
-                className={`pb-3 px-4 font-bold text-xs uppercase tracking-wider transition-all border-b-2 mb-[-5px] flex items-center gap-2 ${
-                  activeTab === "demo"
-                    ? "border-blue-600 text-blue-700"
-                    : "border-transparent text-slate-400 hover:text-slate-650"
-                }`}
-              >
-                <BookOpen size={14} /> Demo & Kuis ({dummyDemos.length})
-              </button>
+            <div className="border-b border-slate-150 pb-3 mb-6">
+              <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2 uppercase tracking-wider">
+                <Calendar size={16} className="text-blue-600" /> Tugas & Pengumpulan
+              </h2>
             </div>
 
             {/* Access locked for unregistered students */}
@@ -692,72 +649,7 @@ function LabDynamicContent() {
                   </div>
                 )}
 
-                {/* --- DEMO & KUIS TAB --- */}
-                {activeTab === "demo" && (
-                  <div className="space-y-4">
-                    <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl mb-4">
-                      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                        <AlertTriangle size={13} className="text-blue-600" />
-                        Informasi Demo Praktikum
-                      </h4>
-                      <p className="text-[11px] text-slate-650 leading-relaxed font-semibold">
-                        Demo praktikum dilakukan secara mandiri atau terjadwal dengan asisten laboratorium.
-                      </p>
-                    </div>
-
-                    <div className="space-y-3">
-                      {dummyDemos.map((demo) => (
-                        <div key={demo.id} className="border border-slate-150 bg-white rounded-2xl hover:border-blue-150 transition group overflow-hidden">
-                          <div
-                            className="flex flex-col sm:flex-row justify-between sm:items-center p-4 cursor-pointer hover:bg-slate-50/50"
-                            onClick={() => {
-                              if (demo.status !== "selesai") {
-                                setExpandedDemoId(expandedDemoId === demo.id ? null : demo.id);
-                              }
-                            }}
-                          >
-                            <div className="space-y-1">
-                              <h4 className="font-extrabold text-sm text-slate-900">{demo.title}</h4>
-                              <p className="text-[11px] text-slate-500 font-semibold">{demo.material}</p>
-                            </div>
-
-                            <div className="mt-3 sm:mt-0 flex items-center gap-3 shrink-0">
-                              {demo.status === "selesai" && demo.score !== null ? (
-                                <div className="flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg text-xs font-bold">
-                                  <Award size={13} />
-                                  <span>Nilai: {demo.score}</span>
-                                </div>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold tracking-wider rounded-lg">
-                                  Belum Selesai
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {expandedDemoId === demo.id && demo.status !== "selesai" && (
-                            <div className="bg-white border-t border-slate-100 p-4">
-                              {userRole === "lecturer" ? (
-                                <div className="p-4 text-slate-400 text-xs font-semibold text-center border border-dashed border-slate-200 rounded-xl">
-                                  Penilaian demo kuis dapat dikelola melalui dashboard.
-                                </div>
-                              ) : (
-                                <div className="flex justify-center">
-                                  <button
-                                    onClick={() => router.push(`/labs/${slug}?tab=demo/${demo.title}`)}
-                                    className="w-full sm:w-auto px-6 py-3 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition shadow-md shadow-blue-900/20"
-                                  >
-                                    Mulai Kuis Demo
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* Demo tab removed */}
               </>
             )}
           </div>

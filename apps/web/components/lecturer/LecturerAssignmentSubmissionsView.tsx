@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { getApiBaseUrl } from '@/lib/api/apiConfig';
 import type {
   AssignmentSubmission,
   AssignmentSubmissionsData,
@@ -223,14 +224,39 @@ function StudentIdentity({ submission }: { submission: AssignmentSubmission }) {
   );
 }
 
+const resolveFileUrl = (url?: string | null) => {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  const baseUrl = getApiBaseUrl().replace(/\/$/, "");
+  return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+};
+
 function SubmittedFile({ submission }: { submission: AssignmentSubmission }) {
+  if (!submission.fileUrl) {
+    return (
+      <div className="min-w-0">
+        <p className="truncate text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+          No File
+        </p>
+      </div>
+    );
+  }
+
+  const filename = submission.fileUrl.split("/").pop() || "Submitted File";
+
   return (
     <div className="min-w-0">
-      <p className="truncate text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-        {submission.fileUrl ? 'Submitted File' : 'No File'}
-      </p>
+      <a
+        href={resolveFileUrl(submission.fileUrl)}
+        target="_blank"
+        rel="noreferrer"
+        className="truncate text-base font-semibold text-blue-600 hover:underline block"
+        title={filename}
+      >
+        {filename}
+      </a>
       <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-        {submission.fileUrl ? '1.2 MB' : ''}
+        Klik untuk mengunduh
       </p>
     </div>
   );

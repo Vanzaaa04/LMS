@@ -22,6 +22,8 @@ export class LabService {
       moduleId: string;
       fileUrl?: string;
       fileName?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
   ) {
     const module = await this.prisma.courseModule.findUnique({
@@ -46,6 +48,8 @@ export class LabService {
         moduleId: data.moduleId,
         fileUrl: data.fileUrl,
         fileName: data.fileName,
+        maxAttempts: data.maxAttempts ?? 1,
+        gradingMethod: data.gradingMethod ?? 'LATEST',
       },
     });
 
@@ -118,6 +122,8 @@ export class LabService {
       instructions?: string;
       fileUrl?: string;
       fileName?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
   ) {
     const lab = await this.prisma.practicalLab.findUnique({

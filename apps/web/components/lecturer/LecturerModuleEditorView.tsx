@@ -145,14 +145,14 @@ export function LecturerModuleEditorView({
 
             <FormSection>
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <FormField label="Sequence / Order">
+                <FormField label="Urutan Bab / Pertemuan">
                   <SelectInput
                     value={formState.sequence}
                     onChange={(value) => updateFormField('sequence', value, setFormState)}
                     options={buildSequenceOptions(moduleCount, mode === 'edit')}
                   />
                 </FormField>
-                <FormField label="Module Duration (Weeks)">
+                <FormField label="Durasi Bab (Minggu)">
                   <SelectInput
                     value={formState.durationWeeks}
                     onChange={(value) => updateFormField('durationWeeks', value, setFormState)}
@@ -210,7 +210,7 @@ export function LecturerModuleEditorView({
                 color: 'var(--color-brand-primary)',
               }}
             >
-              Cancel
+              Kembali ke Kelas
             </Link>
             <button
               type="submit"
@@ -432,20 +432,20 @@ function createInitialFormState(
   return {
     title: '',
     description: '',
-    sequence: `Module ${moduleCount + 1} (End of current list)`,
+    sequence: `Bab ${moduleCount + 1} (Akhir Daftar)`,
     durationWeeks: '1',
     visibilityStatus: 'Draft',
   };
 }
 
 function buildSequenceOptions(moduleCount: number, isEditMode: boolean) {
-  const sequenceOptions = Array.from({ length: moduleCount }, (_, index) => `Module ${index + 1}`);
+  const sequenceOptions = Array.from({ length: moduleCount }, (_, index) => `Bab ${index + 1}`);
 
   if (isEditMode) {
     return sequenceOptions;
   }
 
-  return [...sequenceOptions, `Module ${moduleCount + 1} (End of current list)`];
+  return [...sequenceOptions, `Bab ${moduleCount + 1} (Akhir Daftar)`];
 }
 
 function canSubmitModule(formState: ModuleEditorFormState) {

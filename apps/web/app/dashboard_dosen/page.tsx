@@ -42,30 +42,26 @@ export default function DashboardPage() {
           console.error("Failed to fetch profile", e);
         }
 
-        const coursesRes = await fetch(buildApiUrl("/courses"), {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const [coursesRes, statsRes] = await Promise.all([
+          fetch(buildApiUrl("/courses"), { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(buildApiUrl("/dashboard/lecturer-stats"), { headers: { Authorization: `Bearer ${token}` } })
+        ]);
         
         if (coursesRes.ok) {
           const allCourses = await coursesRes.json();
           const myCourses = allCourses.filter(
             (c: any) => c.instructor?.id === currentUser?.id || c.instructorId === currentUser?.id
           );
-          
           setCourses(myCourses);
+        }
 
-          const totalStudents = myCourses.reduce(
-            (acc: number, curr: any) => acc + (curr._count?.enrollments || 0),
-            0
-          );
-
-          setStats((prev) => ({
-            ...prev,
-            activeCourses: myCourses.length,
-            totalStudents: totalStudents,
-          }));
+        if (statsRes.ok) {
+          const backendStats = await statsRes.json();
+          setStats({
+            activeCourses: backendStats.activeCourses || 0,
+            totalStudents: backendStats.totalStudents || 0,
+            pendingSubmissions: backendStats.pendingSubmissions || 0,
+          });
         }
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);

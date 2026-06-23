@@ -1,6 +1,8 @@
 import { MyCoursesCatalogView } from '@/components/course/MyCoursesCatalogView';
 import { getStudentMyCourses } from '@/lib/api/courseRepository';
 
+export const dynamic = 'force-dynamic';
+
 export default async function MyCoursesPage({
   searchParams,
 }: {

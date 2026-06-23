@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CourseCatalogLayout } from '@/components/course/CourseCatalogLayout';
 import { useCourses } from '@/hooks/useCourses';
@@ -55,9 +56,15 @@ function MyCoursesEmptyState() {
       <h2 className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
         No enrolled courses found
       </h2>
-      <p className="mt-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+      <p className="mt-2 text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
         Enroll in a course from the main course catalog to see it here.
       </p>
+      <Link 
+        href="/courses" 
+        className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-sm"
+      >
+        Lihat Katalog Kelas
+      </Link>
     </div>
   );
 }

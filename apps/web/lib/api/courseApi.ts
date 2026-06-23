@@ -231,6 +231,8 @@ export function updateAssignmentApi(
     templateUrl?: string;
     templateName?: string;
     submissionRequirement?: string;
+    maxAttempts?: number;
+    gradingMethod?: string;
   },
   accessToken: string
 ) {

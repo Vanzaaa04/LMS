@@ -122,7 +122,7 @@ export class DashboardService {
               title: l.title,
               instructions: l.instructions,
               courseName: c.title,
-              instructor: c.instructor.name,
+              instructor: c.instructor?.name || 'Belum ada dosen',
               status: 'active'
             });
           }
@@ -158,7 +158,7 @@ export class DashboardService {
             title: l.title,
             instructions: l.instructions,
             courseName: en.course.title,
-            instructor: en.course.instructor.name,
+            instructor: en.course.instructor?.name || 'Belum ada dosen',
             status: sub ? (sub.status === 'GRADED' ? 'completed' : 'pending') : 'available',
             score: sub?.score || null
           });

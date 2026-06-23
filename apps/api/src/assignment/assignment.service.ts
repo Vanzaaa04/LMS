@@ -26,6 +26,8 @@ export class AssignmentService {
       templateUrl?: string;
       templateName?: string;
       submissionRequirement?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
       moduleId: string;
     },
   ): Promise<Assignment> {
@@ -54,6 +56,8 @@ export class AssignmentService {
         templateUrl: data.templateUrl,
         templateName: data.templateName,
         submissionRequirement: data.submissionRequirement,
+        maxAttempts: data.maxAttempts ?? 1,
+        gradingMethod: data.gradingMethod ?? 'LATEST',
         moduleId: data.moduleId,
       },
     });
@@ -96,6 +100,8 @@ export class AssignmentService {
       templateUrl?: string;
       templateName?: string;
       submissionRequirement?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
   ) {
     const assignment = await this.prisma.assignment.findUnique({
@@ -172,22 +178,22 @@ export class AssignmentService {
       );
     }
 
-    // Validation 2: Check if already submitted
-    const existingSubmission =
-      await this.prisma.assignmentSubmission.findUnique({
-        where: {
-          assignmentId_studentId: {
-            assignmentId,
-            studentId,
-          },
-        },
-      });
+    // Validation 2: Check attempts limit
+    const existingSubmissions = await this.prisma.assignmentSubmission.findMany({
+      where: {
+        assignmentId,
+        studentId,
+      },
+      orderBy: { attemptNumber: 'desc' },
+    });
 
-    if (existingSubmission) {
+    if (existingSubmissions.length >= assignment.maxAttempts) {
       throw new BadRequestException(
-        'You have already submitted this assignment',
+        `You have reached the maximum number of attempts (${assignment.maxAttempts})`,
       );
     }
+
+    const nextAttempt = existingSubmissions.length > 0 ? existingSubmissions[0].attemptNumber + 1 : 1;
 
     // Create submission
     return this.prisma.assignmentSubmission.create({
@@ -197,6 +203,7 @@ export class AssignmentService {
         fileUrl: data.fileUrl,
         note: data.note,
         status: 'PENDING',
+        attemptNumber: nextAttempt,
       },
     });
   }
@@ -227,7 +234,10 @@ export class AssignmentService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { studentId: 'asc' },
+        { attemptNumber: 'desc' }
+      ],
     });
   }
 
@@ -272,13 +282,37 @@ export class AssignmentService {
   }
 
   async getMySubmission(assignmentId: string, studentId: string) {
-    return this.prisma.assignmentSubmission.findUnique({
-      where: {
-        assignmentId_studentId: {
-          assignmentId,
-          studentId,
-        },
-      },
+    // Return the effective submission depending on gradingMethod?
+    // Actually, returning the latest submission makes the most sense for the UI,
+    // so they see their latest uploaded file. Wait, what if they want to see their highest?
+    // The UI currently expects a single object.
+    const assignment = await this.prisma.assignment.findUnique({
+      where: { id: assignmentId },
     });
+
+    const submissions = await this.prisma.assignmentSubmission.findMany({
+      where: {
+        assignmentId,
+        studentId,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (submissions.length === 0) return null;
+
+    if (assignment?.gradingMethod === 'HIGHEST') {
+      // Find the one with highest score
+      let highest = submissions[0];
+      for (const sub of submissions) {
+        if ((sub.score ?? -1) > (highest.score ?? -1)) {
+          highest = sub;
+        }
+      }
+      // Attach the total attempts count so UI knows
+      return { ...highest, _totalAttempts: submissions.length, _maxAttempts: assignment.maxAttempts };
+    }
+
+    // Default LATEST
+    return { ...submissions[0], _totalAttempts: submissions.length, _maxAttempts: assignment?.maxAttempts ?? 1 };
   }
 }

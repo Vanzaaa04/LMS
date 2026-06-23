@@ -53,18 +53,19 @@ export default function AdminCoursesPage() {
         <table className="users-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
-              <th style={{ textAlign: 'left', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>KODE / NAMA MATA KULIAH</th>
+              <th style={{ textAlign: 'left', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>MATA KULIAH</th>
+              <th style={{ textAlign: 'left', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>KELAS</th>
               <th style={{ textAlign: 'left', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>DOSEN PENGAMPU</th>
               <th style={{ textAlign: 'left', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>SEMESTER</th>
-              <th style={{ textAlign: 'left', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>KAPASITAS</th>
+              <th style={{ textAlign: 'left', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>MAHASISWA</th>
               <th style={{ textAlign: 'right', padding: '16px', borderBottom: '1px solid var(--border)', background: '#f8fafc', fontSize: '12px', color: 'var(--text-secondary)' }}>AKSI</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} style={{ textAlign: 'center', padding: '24px', color: '#888' }}>Memuat data...</td></tr>
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#888' }}>Memuat data...</td></tr>
             ) : courses.length === 0 ? (
-              <tr><td colSpan={5} style={{ textAlign: 'center', padding: '24px', color: '#888' }}>Belum ada mata kuliah terdaftar.</td></tr>
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#888' }}>Belum ada mata kuliah terdaftar.</td></tr>
             ) : (
               courses.map(course => (
                 <tr key={course.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
@@ -72,22 +73,34 @@ export default function AdminCoursesPage() {
                     <strong style={{ display: 'block', fontSize: '14px', color: '#111' }}>{course.title}</strong>
                     <span style={{ fontSize: '12px', color: '#666' }}>{course.department} • {course.credits} SKS</span>
                   </td>
-                  <td style={{ padding: '16px', fontSize: '13px', color: '#333' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#DBEAFE', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '10px' }}>
-                        {course.instructor?.name?.substring(0, 2).toUpperCase() || 'NA'}
-                      </div>
-                      {course.instructor?.name || 'Tidak ada dosen'}
-                    </div>
+                  <td style={{ padding: '16px' }}>
+                    {course.className ? (
+                      <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, background: '#EEF2FF', color: '#4338CA' }}>Kelas {course.className}</span>
+                    ) : (
+                      <span style={{ fontSize: '12px', color: '#94a3b8' }}>—</span>
+                    )}
                   </td>
-                  <td style={{ padding: '16px', fontSize: '13px', color: '#333' }}>{course.semester}</td>
+                  <td style={{ padding: '16px', fontSize: '13px', color: '#333' }}>
+                    {course.instructor ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#DBEAFE', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '10px' }}>
+                          {course.instructor.name?.substring(0, 2).toUpperCase()}
+                        </div>
+                        {course.instructor.name}
+                      </div>
+                    ) : (
+                      <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600, background: '#FEF3C7', color: '#92400E' }}>Belum ada dosen</span>
+                    )}
+                  </td>
+                  <td style={{ padding: '16px' }}>
+                    <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700, background: 'linear-gradient(135deg, #2563EB11, #7C3AED11)', color: '#4338CA' }}>Semester {course.targetSemester || '—'}</span>
+                  </td>
                   <td style={{ padding: '16px', fontSize: '13px', color: '#333' }}>
                     {course._count?.enrollments || 0} / {course.enrollmentCap}
                   </td>
                   <td style={{ padding: '16px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                       <Link href={`/dashboard_admin/courses/${course.id}`} style={{ background: '#f1f5f9', color: '#334155', textDecoration: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, display: 'inline-block' }}>Detail</Link>
-                      <Link href={`/dashboard_admin/courses/${course.id}/settings`} style={{ background: '#DBEAFE', color: '#1E40AF', textDecoration: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, display: 'inline-block' }}>Edit</Link>
                     </div>
                   </td>
                 </tr>
