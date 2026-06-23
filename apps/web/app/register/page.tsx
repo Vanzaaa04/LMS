@@ -74,10 +74,10 @@ export default function RegisterPage() {
   return (
     <div className="login-page">
       <header className="navbar">
-        <div className="brand">Ruang Dosen</div>
+        <div className="brand">AFADIA Academy</div>
         <nav className="nav-links">
           <button onClick={() => alert("Pusat Bantuan:\n\n1. Hubungi admin@ruangdosen.ac.id untuk kendala pendaftaran.\n2. Baca panduan penggunaan setelah akun Anda aktif.\n3. Laporkan bug ke Tim IT Support.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Help</button>
-          <button onClick={() => alert("Tentang Ruang Dosen:\n\nRuang Dosen adalah Platform Learning Management System (LMS) Terpadu untuk mahasiswa dan dosen dalam mengelola kelas, praktikum (Practical Lab), tugas, kuis, dan materi kuliah secara interaktif.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>About</button>
+          <button onClick={() => alert("Tentang AFADIA Academy:\n\nAFADIA Academy adalah Platform Learning Management System (LMS) Terpadu untuk mahasiswa dan dosen dalam mengelola kelas, praktikum (Practical Lab), tugas, kuis, dan materi kuliah secara interaktif.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>About</button>
           <button className="btn-support" onClick={() => alert("Hubungi Support:\n\nEmail: support@ruangdosen.ac.id\nWhatsApp: +62 812-3456-7890\nJam Operasional: Senin - Jumat, 08.00 - 17.00 WIB")}>Contact Support</button>
         </nav>
       </header>
@@ -92,7 +92,7 @@ export default function RegisterPage() {
           />
           <div className="image-overlay">
             <h2>Bergabunglah Bersama Kami</h2>
-            <p>Mulai perjalanan akademikmu bersama Ruang Dosen</p>
+            <p>Mulai perjalanan akademikmu bersama AFADIA Academy</p>
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export default function RegisterPage() {
 
             <h1>Daftar Akun Baru</h1>
             <p className="subtitle">
-              Silakan lengkapi data diri Anda untuk bergabung ke Ruang Dosen.
+              Silakan lengkapi data diri Anda untuk bergabung ke AFADIA Academy.
             </p>
 
             {error && (

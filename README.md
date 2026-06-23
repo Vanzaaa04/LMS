@@ -1,6 +1,6 @@
-# 🏫 Platform E-Learning & Praktikum: Ruang Dosen
+# 🏫 Platform E-Learning & Praktikum: AFADIA Academy
 
-**Ruang Dosen** adalah platform Learning Management System (LMS) interaktif yang dirancang khusus untuk mengelola perkuliahan, kuis berbasis gamifikasi, pengerjaan tugas, dan sesi praktikum laboratorium (Asisten Laboratorium/Aslab). Platform ini mengintegrasikan peran Administrator (Admin), Dosen/Pengajar (Lecturer), dan Mahasiswa (Student) dalam satu ekosistem monorepo yang responsif, modern, dan andal.
+**AFADIA Academy** adalah platform Learning Management System (LMS) interaktif yang dirancang khusus untuk mengelola perkuliahan, kuis berbasis gamifikasi, pengerjaan tugas, dan sesi praktikum laboratorium (Asisten Laboratorium/Aslab). Platform ini mengintegrasikan peran Administrator (Admin), Dosen/Pengajar (Lecturer), dan Mahasiswa (Student) dalam satu ekosistem monorepo yang responsif, modern, dan andal.
 
 Aplikasi ini tidak hanya berfungsi sebagai pengelola kelas, tetapi juga menawarkan pengalaman belajar modern dengan menerapkan **Sistem Notifikasi Real-time**, **Kalender Akademik Terintegrasi**, dan pendekatan gamifikasi menggunakan **XP (Experience Points)**.
 
@@ -23,7 +23,7 @@ Untuk memudahkan pengujian fungsionalitas di setiap role, gunakan akun-akun bawa
 ### Akun Pengujian Utama (Domain @ruangdosen.ac.id)
 | Role | Email | Password | Nama Pengguna / Deskripsi |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@ruangdosen.ac.id` | `password123` | Admin Ruang Dosen |
+| **Admin** | `admin@ruangdosen.ac.id` | `password123` | Admin AFADIA Academy |
 | **Dosen** | `dosen@ruangdosen.ac.id` | `password123` | Dr. Aris Setiawan |
 | **Mahasiswa** | `mahasiswa@ruangdosen.ac.id` | `password123` | Budi Santoso |
 

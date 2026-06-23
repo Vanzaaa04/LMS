@@ -125,7 +125,7 @@ export class AuthService {
     console.log(`\n======================================================`);
     console.log(`[SIMULASI EMAIL] - LUPA PASSWORD`);
     console.log(`Ke: ${email}`);
-    console.log(`Subjek: Reset Password Ruang Dosen`);
+    console.log(`Subjek: Reset Password AFADIA Academy`);
     console.log(`Halo ${user.name},`);
     console.log(`Klik link berikut untuk mereset password Anda:`);
     console.log(`http://localhost:3000/reset-password?token=${mockResetToken}`);

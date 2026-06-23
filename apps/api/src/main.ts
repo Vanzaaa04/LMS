@@ -20,9 +20,9 @@ async function bootstrap() {
 
   // Swagger Documentation Setup
   const config = new DocumentBuilder()
-    .setTitle('EduLab LMS - Ruang Dosen API')
+    .setTitle('EduLab LMS - AFADIA Academy API')
     .setDescription(
-      'Dokumentasi API lengkap untuk sistem manajemen pembelajaran (LMS) Ruang Dosen.',
+      'Dokumentasi API lengkap untuk sistem manajemen pembelajaran (LMS) AFADIA Academy.',
     )
     .setVersion('1.0')
     .addBearerAuth(
