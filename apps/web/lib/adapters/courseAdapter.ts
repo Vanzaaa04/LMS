@@ -40,7 +40,7 @@ export function mapApiCourseToStudentCourse(
   course: ApiCourseListItem,
   enrolledCourseIds: string[] = []
 ): Course {
-  const instructorName = course.instructor?.name ?? 'Course Instructor';
+  const instructorName = course.instructor?.name ?? 'Belum ada dosen';
   const isEnrolled = enrolledCourseIds.includes(course.id);
 
   return {
@@ -55,7 +55,7 @@ export function mapApiCourseToStudentCourse(
     description: course.description ?? 'Course description is being prepared by the lecturer.',
     instructorName,
     instructorInitials: createPersonInitials(instructorName),
-    instructorRole: 'Course Instructor',
+    instructorRole: course.instructor ? 'Course Instructor' : '-',
     creditHours: course.credits ?? DEFAULT_CREDIT_HOURS,
     progressPercentage: 0,
     status: isEnrolled ? 'ongoing' : 'notstart',
@@ -63,6 +63,7 @@ export function mapApiCourseToStudentCourse(
     totalQuizzes: 0,
     isNew: false,
     durationWeeks: DEFAULT_DURATION_WEEKS,
+    className: course.className,
   };
 }
 
@@ -183,6 +184,7 @@ export function mapApiCourseDetailToLecturerManageCourse(course: ApiCourseDetail
       id: apiModule.id,
       orderLabel: `M${index + 1}`,
       title: apiModule.title || `Module ${index + 1}`,
+      description: apiModule.description ?? undefined,
       weekLabel: `Week ${index + 1}`,
       status: 'Published',
       durationWeeks: 1,

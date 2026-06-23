@@ -64,7 +64,9 @@ export class NotificationService {
 
     // 3. Gabungkan seluruh ID penerima (dosen pengajar + mahasiswa terdaftar)
     const userIds = new Set<string>();
-    userIds.add(course.instructorId);
+    if (course.instructorId) {
+      userIds.add(course.instructorId);
+    }
     enrollments.forEach(e => userIds.add(e.userId));
 
     // 4. Masukkan notifikasi ke database

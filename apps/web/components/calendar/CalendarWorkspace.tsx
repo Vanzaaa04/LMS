@@ -98,44 +98,31 @@ export default function CalendarWorkspace() {
 
     async function loadDynamicEvents() {
       try {
-        let coursesList: any[] = [];
-        if (userRole === "STUDENT" || userRole === "LECTURER") {
-          coursesList = await fetchMyCourses(currentToken);
-        } else if (userRole === "ADMIN") {
-          coursesList = await fetchCourses(currentToken);
-        }
-
-        const details = await Promise.all(
-          coursesList.map((course) =>
-            fetchCourseDetail(course.id, currentToken).catch((err) => {
-              console.error(`Failed to fetch detail for course ${course.id}`, err);
-              return null;
-            })
-          )
-        );
-
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}/calendar/events`, {
+          headers: { Authorization: `Bearer ${currentToken}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch calendar events');
+        
+        const apiEvents = await res.json();
         const loadedEvents: CalendarEvent[] = [];
-        details.forEach((detail) => {
-          if (!detail) return;
-          detail.modules.forEach((mod) => {
-            mod.assignments.forEach((assignment) => {
-              if (assignment.deadline) {
-                const date = new Date(assignment.deadline);
-                const y = date.getFullYear();
-                const m = String(date.getMonth() + 1).padStart(2, "0");
-                const d = String(date.getDate()).padStart(2, "0");
-                const dateStr = `${y}-${m}-${d}`;
+        
+        apiEvents.forEach((assignment: any) => {
+          if (assignment.start) {
+            const date = new Date(assignment.start);
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, "0");
+            const d = String(date.getDate()).padStart(2, "0");
+            const dateStr = `${y}-${m}-${d}`;
 
-                loadedEvents.push({
-                  id: `assignment-${assignment.id}`,
-                  title: `Tugas: ${assignment.title}`,
-                  description: `Deadline: ${new Date(assignment.deadline).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} • Mata Kuliah: ${detail.title}`,
-                  dateStr,
-                  color: "red", // Red for deadlines!
-                });
-              }
+            loadedEvents.push({
+              id: `assignment-${assignment.id}`,
+              title: `Tugas: ${assignment.title}`,
+              description: `Deadline: ${new Date(assignment.start).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} • Mata Kuliah: ${assignment.courseName}`,
+              dateStr,
+              color: "red", 
             });
-          });
+          }
         });
 
         setAssignmentEvents(loadedEvents);

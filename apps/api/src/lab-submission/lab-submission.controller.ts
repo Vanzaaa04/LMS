@@ -86,7 +86,7 @@ export class LabSubmissionController {
     @Body() data: { score: number; feedback?: string },
     @Request() req: { user: { id: string; role: string } },
   ) {
-    return this.labSubmissionService.grade(submissionId, req.user.id, data, req.user.role);
+    return this.labSubmissionService.gradeSubmission(submissionId, req.user.id, data, req.user.role);
   }
 
   @UseGuards(JwtAuthGuard)

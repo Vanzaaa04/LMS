@@ -180,9 +180,10 @@
 }
 
 .profile-avatar {
-  width: 100px;
-  height: 100px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
+  overflow: hidden;
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(8px);
   border: 3px solid rgba(255,255,255,0.5);
@@ -204,8 +205,8 @@
 
 .profile-avatar-badge {
   position: absolute;
-  bottom: 4px;
-  right: 4px;
+  bottom: 6px;
+  right: 6px;
   width: 22px;
   height: 22px;
   background: var(--green);

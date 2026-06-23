@@ -149,6 +149,7 @@ export class AuthService {
         xp: true,
         maxCredits: true,
         angkatan: true,
+        semester: true,
         createdAt: true,
         enrollments: {
           select: {
@@ -179,6 +180,7 @@ export class AuthService {
       xp: user.xp,
       maxCredits: user.maxCredits,
       angkatan: user.angkatan,
+      semester: user.semester,
       usedCredits,
       remainingCredits: Math.max(user.maxCredits - usedCredits, 0),
       createdAt: user.createdAt,
@@ -188,7 +190,7 @@ export class AuthService {
   // === PROFILE: Update User Profile ===
   async updateProfile(
     userId: string,
-    data: { name?: string; password?: string },
+    data: { name?: string; password?: string; semester?: number },
   ) {
     const updateData: any = {};
     if (data.name) {
@@ -196,6 +198,9 @@ export class AuthService {
     }
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);
+    }
+    if (data.semester !== undefined) {
+      updateData.semester = data.semester;
     }
 
     const updatedUser = await this.prisma.user.update({

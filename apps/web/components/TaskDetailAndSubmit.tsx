@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { getApiBaseUrl } from '../lib/api/apiConfig';
 import { Task } from '../types';
 import { ArrowLeft, Calendar, FileText, CheckCircle, Upload, MessageSquare, Award, Clock, RotateCcw, AlertTriangle } from 'lucide-react';
+
+const resolveFileUrl = (url?: string | null) => {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  const baseUrl = getApiBaseUrl().replace(/\/$/, "");
+  return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+};
 
 interface TaskDetailAndSubmitProps {
   task: Task;
@@ -294,9 +302,15 @@ export const TaskDetailAndSubmit: React.FC<TaskDetailAndSubmitProps> = ({
                       <FileText size={20} />
                     </div>
                     <div className="overflow-hidden">
-                      <p className="font-bold text-slate-800 text-xs truncate" title={task.submission.fileName}>
+                      <a
+                        href={resolveFileUrl(task.submission.fileUrl)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-bold text-blue-600 hover:underline text-xs truncate block"
+                        title={task.submission.fileName}
+                      >
                         {task.submission.fileName}
-                      </p>
+                      </a>
                       <p className="text-[10px] text-slate-500 mt-0.5 font-medium">{task.submission.fileSize}</p>
                     </div>
                   </div>
@@ -385,9 +399,15 @@ export const TaskDetailAndSubmit: React.FC<TaskDetailAndSubmitProps> = ({
                     <FileText size={20} />
                   </div>
                   <div className="overflow-hidden">
-                    <p className="font-bold text-slate-800 text-xs truncate" title={task.submission.fileName}>
+                    <a
+                      href={resolveFileUrl(task.submission.fileUrl)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-bold text-blue-600 hover:underline text-xs truncate block"
+                      title={task.submission.fileName}
+                    >
                       {task.submission.fileName}
-                    </p>
+                    </a>
                     <p className="text-[10px] text-slate-500 mt-0.5 font-medium">{task.submission.fileSize}</p>
                   </div>
                 </div>

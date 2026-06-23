@@ -24,6 +24,8 @@ export class QuizService {
       passingScore: number;
       timeLimit?: number;
       status?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
   ) {
     const module = await this.prisma.courseModule.findUnique({
@@ -50,6 +52,8 @@ export class QuizService {
         passingScore: data.passingScore,
         timeLimit: data.timeLimit ?? 30,
         status: data.status ?? 'DRAFT',
+        maxAttempts: data.maxAttempts ?? 1,
+        gradingMethod: data.gradingMethod ?? 'LATEST',
       },
     });
 
@@ -77,6 +81,8 @@ export class QuizService {
         xpReward: true,
         passingScore: true,
         timeLimit: true,
+        maxAttempts: true,
+        gradingMethod: true,
         _count: {
           select: { questions: true },
         },
@@ -89,6 +95,7 @@ export class QuizService {
       where: { id },
       include: {
         questions: true,
+        module: { select: { courseId: true } }
       },
     });
 
@@ -104,6 +111,7 @@ export class QuizService {
 
     return {
       ...quiz,
+      courseId: quiz.module?.courseId,
       questions: sanitizedQuestions,
     };
   }
@@ -118,6 +126,8 @@ export class QuizService {
       xpReward?: number;
       passingScore?: number;
       status?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
   ) {
     const quiz = await this.prisma.quiz.findUnique({
@@ -178,18 +188,21 @@ export class QuizService {
       throw new NotFoundException('Quiz not found');
     }
 
-    const existingSubmission = await this.prisma.quizSubmission.findUnique({
+    const existingSubmissions = await this.prisma.quizSubmission.findMany({
       where: {
-        quizId_studentId: {
-          quizId: id,
-          studentId: userId,
-        },
+        quizId: id,
+        studentId: userId,
       },
+      orderBy: { attemptNumber: 'desc' },
     });
 
-    if (existingSubmission) {
-      throw new ForbiddenException('You have already submitted this quiz');
+    if (existingSubmissions.length >= quiz.maxAttempts) {
+      throw new ForbiddenException(
+        `You have reached the maximum number of attempts (${quiz.maxAttempts})`,
+      );
     }
+
+    const nextAttempt = existingSubmissions.length > 0 ? existingSubmissions[0].attemptNumber + 1 : 1;
 
     let correctCount = 0;
     const totalQuestions = quiz.questions.length;
@@ -224,7 +237,12 @@ export class QuizService {
     const passed = score >= quiz.passingScore;
     let xpGained = 0;
 
-    if (passed) {
+    // Only award XP if they passed AND they haven't passed before, or wait...
+    // Actually, if we award XP every time they pass, they can farm XP!
+    // Let's check if any previous submission already passed.
+    const hasPassedBefore = existingSubmissions.some((sub) => sub.passed);
+    
+    if (passed && !hasPassedBefore) {
       xpGained = quiz.xpReward;
       // Increment XP
       await this.prisma.user.update({
@@ -242,6 +260,7 @@ export class QuizService {
         score,
         passed,
         details,
+        attemptNumber: nextAttempt,
       },
     });
 
@@ -402,20 +421,31 @@ export class QuizService {
   }
 
   async getSubmission(quizId: string, studentId: string) {
-    const submission = await this.prisma.quizSubmission.findUnique({
-      where: {
-        quizId_studentId: {
-          quizId,
-          studentId,
-        },
-      },
+    const quiz = await this.prisma.quiz.findUnique({
+      where: { id: quizId },
     });
 
-    if (!submission) {
-      throw new NotFoundException('Quiz submission not found');
+    const submissions = await this.prisma.quizSubmission.findMany({
+      where: {
+        quizId,
+        studentId,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (submissions.length === 0) return null;
+
+    if (quiz?.gradingMethod === 'HIGHEST') {
+      let highest = submissions[0];
+      for (const sub of submissions) {
+        if (sub.score > highest.score) {
+          highest = sub;
+        }
+      }
+      return { ...highest, _totalAttempts: submissions.length, _maxAttempts: quiz.maxAttempts };
     }
 
-    return submission;
+    return { ...submissions[0], _totalAttempts: submissions.length, _maxAttempts: quiz?.maxAttempts ?? 1 };
   }
 
   async getSubmissionsList(quizId: string, userId: string, userRole: string) {

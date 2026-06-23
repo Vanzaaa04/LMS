@@ -73,6 +73,11 @@ export const EnrollModal: React.FC<EnrollModalProps> = ({
                         style={{ color: 'var(--color-text-primary)' }}
                     >
                         {course.title}
+                        {course.className && (
+                            <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-brand-primary)', marginLeft: '8px' }}>
+                                (Kelas {course.className})
+                            </span>
+                        )}
                     </h2>
 
                     {/* Instructor */}

@@ -33,6 +33,8 @@ interface AssignmentEditorFormState {
   templateName: string;
   templateMeta: string;
   templateUrl: string;
+  maxAttempts: string;
+  gradingMethod: string;
 }
 
 interface LecturerAssignmentEditorViewProps {
@@ -40,7 +42,7 @@ interface LecturerAssignmentEditorViewProps {
   course: LecturerCourse;
   module: LecturerCourseModule;
   existingAssignments: ExistingAssignmentItem[];
-  assignment?: LecturerModuleAssessment;
+  assignment?: LecturerModuleAssessment & { maxAttempts?: number; gradingMethod?: string };
   onSave: (formData: FormData) => Promise<void>;
   onDelete?: () => Promise<void>;
   returnHref?: string;
@@ -201,6 +203,26 @@ export function LecturerAssignmentEditorView({
               </FormSection>
 
               <FormSection>
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 mb-5">
+                  <FormField label="Max Attempts">
+                    <TextInput
+                      type="number"
+                      value={formState.maxAttempts}
+                      onChange={(value) => updateFormField('maxAttempts', value, setFormState)}
+                      placeholder="e.g. 1, 3"
+                      min="1"
+                    />
+                  </FormField>
+                  <FormField label="Grading Method">
+                    <SelectInput
+                      value={formState.gradingMethod}
+                      onChange={(value) =>
+                        updateFormField('gradingMethod', value, setFormState)
+                      }
+                      options={['LATEST', 'HIGHEST']}
+                    />
+                  </FormField>
+                </div>
                 <FormField label="Submission Requirements">
                   <SelectInput
                     value={formState.submissionRequirement}
@@ -287,7 +309,7 @@ export function LecturerAssignmentEditorView({
                   color: 'var(--color-text-secondary)',
                 }}
               >
-                Cancel
+                Kembali ke Kelas
               </Link>
               {mode === 'create' ? (
                 <button
@@ -683,21 +705,31 @@ function StatusPill({ status }: { status: LecturerAssignmentStatus }) {
   );
 }
 
+function formatDateTimeLocal(isoString?: string | null) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return '';
+  const tzOffset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
 function createInitialFormState(
   mode: AssignmentEditorMode,
-  assignment?: LecturerModuleAssessment
+  assignment?: LecturerModuleAssessment & { maxAttempts?: number; gradingMethod?: string }
 ): AssignmentEditorFormState {
   if (mode === 'edit' && assignment) {
     return {
       title: assignment.title,
       description: assignment.description ?? '',
-      assignedDate: assignment.assignedDate ?? '',
-      deadline: assignment.deadline ?? '',
+      assignedDate: formatDateTimeLocal(assignment.assignedDate),
+      deadline: formatDateTimeLocal(assignment.deadline),
       submissionRequirement: assignment.submissionRequirement ?? SUBMISSION_REQUIREMENT_OPTIONS[0],
       status: assignment.status ?? 'Draft',
       templateName: assignment.templateName ?? '',
       templateMeta: assignment.templateMeta ?? '',
       templateUrl: assignment.templateUrl ?? '',
+      maxAttempts: assignment.maxAttempts?.toString() ?? '1',
+      gradingMethod: assignment.gradingMethod ?? 'LATEST',
     };
   }
 
@@ -711,6 +743,8 @@ function createInitialFormState(
     templateName: '',
     templateMeta: '',
     templateUrl: '',
+    maxAttempts: '1',
+    gradingMethod: 'LATEST',
   };
 }
 
@@ -728,6 +762,8 @@ function createAssignmentFormData(
   formData.set('templateName', formState.templateName);
   formData.set('templateMeta', formState.templateMeta);
   formData.set('templateUrl', formState.templateUrl);
+  formData.set('maxAttempts', formState.maxAttempts);
+  formData.set('gradingMethod', formState.gradingMethod);
   return formData;
 }
 

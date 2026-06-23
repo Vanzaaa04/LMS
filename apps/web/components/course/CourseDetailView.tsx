@@ -294,17 +294,6 @@ export function CourseDetailView({ course }: CourseDetailViewProps) {
               {course.description} {course.subtitle}
             </p>
 
-            <div className="flex items-center gap-3">
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-full rounded-full bg-blue-700 transition-all"
-                  style={{ width: `${course.progressPercentage}%` }}
-                />
-              </div>
-              <span className="whitespace-nowrap text-sm text-gray-500">
-                {course.progressPercentage}% Complete
-              </span>
-            </div>
           </div>
 
           {/* Kanan: tombol aksi */}
@@ -317,17 +306,7 @@ export function CourseDetailView({ course }: CourseDetailViewProps) {
                 <Play className="h-4 w-4 fill-white" />
                 {course.status === 'notstart' ? 'Start Learning' : 'Continue Learning'}
               </Link>
-            ) : (
-              <button className="flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-800">
-                <Play className="h-4 w-4 fill-white" />
-                {course.status === 'notstart' ? 'Start Learning' : 'Continue Learning'}
-              </button>
-            )}
-            
-            <button className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50">
-              <Calendar className="h-4 w-4" />
-              View Schedule
-            </button>
+            ) : null}
           </div>
         </div>
       </div>
