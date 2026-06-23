@@ -1,0 +1,78 @@
+
+> web@0.1.0 lint
+> eslint
+
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/app/labs/[slug]/page.tsx
+  55:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/app/labs/[slug]/page.tsx:55:7
+  53 |     
+  54 |     if (viewQuery === 'register') {
+> 55 |       setCurrentView('register-lab');
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  56 |     } else if (taskIdQuery) {
+  57 |       setSelectedTaskId(taskIdQuery);
+  58 |       setCurrentView('task-detail');  react-hooks/set-state-in-effect
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/app/layout.tsx
+  47:9  warning  A font-display parameter is missing (adding `&display=optional` is recommended). See: https://nextjs.org/docs/messages/google-font-display                       @next/next/google-font-display
+  47:9  warning  Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/DashboardLayout.tsx
+  11:3  warning  'LayoutDashboard' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/DosenWorkspace.tsx
+   99:3   warning  'onGradeLabSubmission' is defined but never used            @typescript-eslint/no-unused-vars
+  227:10  warning  'selectedLabToGrade' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  227:30  warning  'setSelectedLabToGrade' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  228:10  warning  'labGradeInput' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  228:25  warning  'setLabGradeInput' is assigned a value but never used       @typescript-eslint/no-unused-vars
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/LabDetail.tsx
+   26:7  warning  'SimpleMarkdown' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  223:9  warning  'completedTasks' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/LabList.tsx
+  58:11  warning  'labTasks' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/LabSubmitForm.tsx
+  3:21  warning  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/QuizWorkspace.tsx
+    3:16  warning  'QuizQuestion' is defined but never used                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    6:3   warning  'Award' is defined but never used                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+    7:3   warning  'BookOpen' is defined but never used                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   15:3   warning  'RotateCcw' is defined but never used                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   17:3   warning  'FileCheck2' is defined but never used                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   18:3   warning  'Calendar' is defined but never used                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   19:3   warning  'User' is defined but never used                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   20:3   warning  'Eye' is defined but never used                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+   22:3   warning  'PlusCircle' is defined but never used                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   23:3   warning  'Trash2' is defined but never used                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  209:3   warning  The 'handleAutoSubmit' function makes the dependencies of useEffect Hook (at line 133) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'handleAutoSubmit' in its own useCallback() Hook  react-hooks/exhaustive-deps
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/TaskDetailAndSubmit.tsx
+    2:16  warning  'TaskSubmission' is defined but never used                       @typescript-eslint/no-unused-vars
+  247:23  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  247:50  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  295:73  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  295:96  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/components/TopNavBar.tsx
+  24:9  warning  'isLecturer' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/devano/Documents/Code/Web-Ruang-Dosen/apps/web/types.ts
+  13:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+✖ 31 problems (6 errors, 25 warnings)
+

@@ -1,0 +1,213 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Brand Colors */
+  --color-brand-primary: #003594;
+  --color-brand-dark: #00174B;
+  --color-brand-light: #004AC6;
+  --color-brand-bg: #DBE1FF;
+  --color-brand-subtle: #D5E0F8;
+
+  /* Neutral / Text */
+  --color-text-primary: #191C1D;
+  --color-text-secondary: #434654;
+  --color-text-muted: #586377;
+  
+  /* Border */
+  --color-border: #C3C6D6;
+  --color-border-light: #f0f0f0;
+
+  /* Background */
+  --color-bg-backdrop: #EEF2F6;
+  --color-bg-page: #F8F9FA;
+  --color-bg-white: #FFFFFF;
+  --color-bg-input: #EDEEEF;
+  
+  /* Layout */
+  --page-surface-gap: clamp(12px, 1.6vw, 24px);
+  --page-surface-radius: 26px;
+
+  /* Status */
+  --color-success: #28a745;
+  --color-danger: #BA1A1A;
+  --color-warning: #EA580C;
+  --color-warning-bg: #FFF7ED;
+  --color-info: #17a2b8;
+  --color-success: #16A34A;
+  --color-success-bg: #DCFCE7;
+  --color-purple: #7C3AED;
+  --color-purple-bg: #EDE9FE;
+
+  /* Compatibility aliases for legacy dashboard/lecturer CSS.
+     These keep older components readable while they are migrated to --color-* tokens. */
+  --primary: var(--color-brand-primary);
+  --primary-dark: var(--color-brand-dark);
+  --primary-light: var(--color-brand-bg);
+  --primary-hover: var(--color-brand-subtle);
+  --green: var(--color-success);
+  --green-light: var(--color-success-bg);
+  --orange: var(--color-warning);
+  --orange-light: var(--color-warning-bg);
+  --purple: var(--color-purple);
+  --purple-light: var(--color-purple-bg);
+  --red: var(--color-danger);
+  --red-light: #FEF2F2;
+  --bg: var(--color-bg-backdrop);
+  --card-bg: var(--color-bg-white);
+  --sidebar-bg: var(--color-bg-white);
+  --border: var(--color-border);
+  --border-hover: #AEB4C8;
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --shadow-sm: 0 1px 3px rgba(15, 33, 74, 0.08);
+  --shadow-md: 0 8px 18px rgba(15, 33, 74, 0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --transition: 0.2s ease;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Segoe UI", Arial, sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", monospace;
+
+  /* Custom Colors */
+  --color-error: #ba1a1a;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-dim: #cbdbf5;
+  --color-on-primary-container: #bcceff;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-tertiary-fixed: #e1e0ff;
+  --color-secondary-fixed: #6ffbbe;
+  --color-on-secondary-fixed-variant: #005236;
+  --color-on-primary-fixed: #001945;
+  --color-inverse-primary: #b0c6ff;
+  --color-on-surface-variant: #434653;
+  --color-tertiary: #2724b8;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-bright: #f8f9ff;
+  --color-secondary: #006c49;
+  --color-inverse-surface: #213145;
+  --color-surface-container-highest: #d3e4fe;
+  --color-on-primary-fixed-variant: #00419c;
+  --color-outline: #737784;
+  --color-on-error: #ffffff;
+  --color-tertiary-container: #4243cf;
+  --color-secondary-container: #6cf8bb;
+  --color-on-tertiary-fixed-variant: #2f2ebe;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-fixed-dim: #c0c1ff;
+  --color-primary-fixed: #d9e2ff;
+  --color-surface-variant: #d3e4fe;
+  --color-primary: #003c90;
+  --color-outline-variant: #c3c6d5;
+  --color-on-secondary-fixed: #002113;
+  --color-primary-container: #0f52ba;
+  --color-on-surface: #0b1c30;
+  --color-surface-container: #e5eeff;
+  --color-on-background: #0b1c30;
+  --color-surface-container-low: #eff4ff;
+  --color-on-primary: #ffffff;
+  --color-surface: #f8f9ff;
+  --color-on-tertiary-container: #c9caff;
+  --color-on-secondary: #ffffff;
+  --color-on-error-container: #93000a;
+  --color-on-secondary-container: #00714d;
+  --color-surface-tint: #1d59c1;
+  --color-secondary-fixed-dim: #4edea3;
+  --color-primary-fixed-dim: #b0c6ff;
+  --color-error-container: #ffdad6;
+  --color-on-tertiary-fixed: #07006c;
+
+  /* Custom Border Radius */
+  --radius-default: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+
+  /* Custom Spacing */
+  --spacing-stack-md: 16px;
+  --spacing-stack-lg: 24px;
+  --spacing-margin-page: 32px;
+  --spacing-base-unit: 4px;
+  --spacing-stack-sm: 8px;
+  --spacing-gutter-grid: 24px;
+
+  /* Custom Fonts */
+  --font-technical-code: "Segoe UI", Arial, sans-serif;
+  --font-label-caps: "Segoe UI", Arial, sans-serif;
+  --font-body-sm: "Segoe UI", Arial, sans-serif;
+  --font-display-lg: "Segoe UI", Arial, sans-serif;
+  --font-body-base: "Segoe UI", Arial, sans-serif;
+  --font-headline-md: "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-outline-variant) transparent;
+}
+
+body {
+  background-color: var(--color-bg-backdrop);
+  color: var(--color-text-primary);
+  font-family: var(--font-body-base);
+  color-scheme: light;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+/* Thin Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-transition {
+  animation: page-fade-in 220ms ease-out;
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Sidebar responsive */
+@media (min-width: 768px) {
+  aside[data-sidebar] {
+    width: 256px;
+    padding: 24px 20px;
+  }
+}

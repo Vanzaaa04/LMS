@@ -1,0 +1,5 @@
+Langkah-langkah Praktikum 1:
+1. Buat database bernama 'ruang_dosen'.
+2. Buat tabel 'User' dengan kolom: id, name, email, password, role.
+3. Jalankan query INSERT untuk menambahkan data awal.
+4. Kumpulkan hasil query Anda dalam berkas ZIP.

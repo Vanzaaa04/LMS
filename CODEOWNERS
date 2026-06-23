@@ -1,0 +1,13 @@
+# --------------------------------------------------------
+# ATURAN REVIEWER UNTUK MONOREPO
+# --------------------------------------------------------
+
+# 1. Leader Backend bertanggung jawab atas semua isi folder api
+/apps/api/ @Vanzaaa04
+
+# 2. Leader Frontend bertanggung jawab atas semua isi folder web
+/apps/web/ @BagasD-Tara
+
+# 3. (Opsional) File konfigurasi utama di root folder
+/package.json @Vanzaaa04 @BagasD-Tara
+/turbo.json @Vanzaaa04 @BagasD-Tara

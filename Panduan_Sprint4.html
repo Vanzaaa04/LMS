@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Panduan Sprint 4 - Tim Backend Ruang Dosen</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;color:#1a1a2e;line-height:1.7;padding:40px 60px;background:#fff}
+h1{font-size:28px;color:#1a3a5c;text-align:center;margin-bottom:4px}
+h2.subtitle{font-size:14px;color:#666;text-align:center;font-weight:400;margin-bottom:6px}
+h2.tema{font-size:13px;color:#888;text-align:center;font-weight:400;margin-bottom:30px}
+h2{font-size:20px;color:#1a3a5c;margin:30px 0 10px;border-bottom:2px solid #e0e0e0;padding-bottom:6px}
+h3{font-size:16px;color:#2c5282;margin:18px 0 8px}
+h4{font-size:14px;color:#1a3a5c;margin:14px 0 6px}
+p{font-size:13px;margin-bottom:10px;text-align:justify}
+table{width:100%;border-collapse:collapse;margin:10px 0 20px;font-size:13px}
+th{background:#1a3a5c;color:#fff;padding:8px 12px;text-align:left}
+td{padding:8px 12px;border-bottom:1px solid #e0e0e0}
+tr:nth-child(even){background:#f8f9fb}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:12px}
+pre{background:#1a1a2e;color:#e0e0e0;padding:14px 18px;border-radius:8px;font-size:12px;margin:8px 0 14px;overflow-x:auto;white-space:pre-wrap}
+.alert{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 14px;margin:14px 0;font-size:12px;border-radius:0 6px 6px 0}
+.alert-red{background:#fce4e4;border-left:4px solid #e74c3c}
+.alert-blue{background:#e8f4fd;border-left:4px solid #3498db}
+.alert-green{background:#e8fde8;border-left:4px solid #27ae60}
+.person-header{background:#1a3a5c;color:#fff;padding:14px 20px;border-radius:10px 10px 0 0;margin-top:40px;page-break-before:always}
+.person-header span{font-size:12px;opacity:0.8}
+.person-body{border:1px solid #e0e0e0;border-top:none;padding:20px 24px;border-radius:0 0 10px 10px;margin-bottom:20px}
+ol,ul{font-size:13px;margin:6px 0 12px 20px}
+li{margin-bottom:5px}
+.step-title{font-weight:700;color:#2c5282}
+.badge{display:inline-block;background:#e8f4fd;color:#2c5282;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+@media print{body{padding:20px 30px}.person-header{page-break-before:always}}
+</style>
+</head>
+<body>
+
+<h1>PANDUAN SPRINT 4 - TIM BACKEND RUANG DOSEN</h1>
+<h2 class="subtitle">Periode: 24 Mei - 28 Mei 2026</h2>
+<h2 class="tema">Tema: Lab CRUD, Lab Submission &amp; Grading, Testing API</h2>
+
+<table>
+<tr><th>Nama</th><th>Tugas</th><th>Branch</th></tr>
+<tr><td><strong>Ariel (Leader)</strong></td><td>✅ Sudah selesai (Admin Endpoints)</td><td>-</td></tr>
+<tr><td><strong>Tio</strong></td><td>Lab CRUD (4 endpoint)</td><td><code>fitur/backend-tio-lab</code></td></tr>
+<tr><td><strong>Sinta</strong></td><td>Testing API via Postman &amp; Bug Fixing</td><td><code>fitur/backend-sinta-testing</code></td></tr>
+<tr><td><strong>Dimas</strong></td><td>Lab Submission &amp; Grading (3 endpoint + Simulasi)</td><td><code>fitur/backend-dimas-lab-submission</code></td></tr>
+</table>
+
+<div class="alert alert-red"><strong>⚠️ URUTAN PENGERJAAN WAJIB:</strong> Dimas <strong>TIDAK BOLEH</strong> mulai coding sebelum PR (Pull Request) milik Tio sudah di-merge ke <code>develop</code> oleh Leader. Karena modul Lab Submission milik Dimas bergantung pada modul Lab CRUD milik Tio. Tio harus selesai duluan.</div>
+
+
+<h2>📏 Aturan Git &amp; Penamaan Branch</h2>
+
+<h3>Format Nama Branch</h3>
+<div class="alert alert-blue">Format: <code>fitur/backend-[nama]-[modul]</code><br>Contoh: <code>fitur/backend-tio-lab</code>, <code>fitur/backend-dimas-lab-submission</code></div>
+
+<h3>Aturan Push</h3>
+<div class="alert alert-red"><strong>JANGAN</strong> langsung push ke branch <code>main</code> atau <code>develop</code>. Yang merge ke develop cuma Leader (Ariel).</div>
+<ul>
+<li>Sebelum coding, <strong>WAJIB</strong> jalankan perintah sinkronisasi yang ada di bagian Persiapan Awal masing-masing tugas.</li>
+<li>Buat branch baru sesuai format yang ditentukan.</li>
+<li>Setelah selesai, push ke branch kalian sendiri, lalu buat <strong>Pull Request ke branch <code>develop</code></strong> (bukan main).</li>
+</ul>
+
+<h3>Versi Node.js</h3>
+<p>Pastikan versi Node.js kalian adalah <strong>v25.8.0</strong>. Cek dengan perintah <code>node -v</code> di terminal. Jika berbeda, download dan install dari <a href="https://nodejs.org">nodejs.org</a>. Ini penting agar file <code>package-lock.json</code> tidak bentrok antar anggota.</p>
+
+<h4>Format Commit</h4>
+<table>
+<tr><th>Prefix</th><th>Digunakan untuk</th></tr>
+<tr><td><code>feat:</code></td><td>Fitur baru</td></tr>
+<tr><td><code>fix:</code></td><td>Perbaikan bug</td></tr>
+<tr><td><code>chore:</code></td><td>Konfigurasi / setup</td></tr>
+</table>
+
+<h3>Aturan Clean Code</h3>
+<ul>
+<li>Pakai nama variabel dan fungsi yang jelas. Jangan pakai nama asal kayak <code>x</code>, <code>data1</code>, <code>temp</code>.</li>
+<li>Satu fungsi satu tugas. Jangan campur aduk jadi satu baris panjang.</li>
+<li>Kasih komentar di bagian yang rumit.</li>
+<li>Hapus kode yang gak kepake, jangan biarin numpuk.</li>
+<li>Rapiin indentasi. Pakai Prettier atau ESLint yang udah ada di project.</li>
+<li><strong>Coding cuma di folder <code>apps/api/src/</code> di modul kamu. Jangan sentuh folder/file orang lain.</strong></li>
+</ul>
+
+<!-- ============ ARIEL ============ -->
+<div class="person-header"><h3 style="margin:0;color:#fff">👑 ARIEL (Leader) - Sprint 4 Sudah Selesai</h3><span>Tidak ada branch baru</span></div>
+<div class="person-body">
+
+<h3>Status</h3>
+<div class="alert alert-green"><strong>✅ SELESAI.</strong> Seluruh tugas Sprint 4 Ariel sudah dikerjakan dan di-merge ke <code>develop</code>.</div>
+
+<h3>Apa yang Sudah Diselesaikan di Sprint 4</h3>
+<ul>
+<li><strong>Endpoint <code>GET /admin/statistics</code></strong> - Statistik keseluruhan sistem: total user (mahasiswa, dosen, admin), total course, total kuis, total tugas.</li>
+<li><strong>Endpoint <code>GET /admin/users</code></strong> - Daftar seluruh pengguna dengan filter berdasarkan role.</li>
+<li><strong>Endpoint <code>PUT /admin/users/:id/role</code></strong> - Mengubah role pengguna (misal: menaikkan mahasiswa jadi dosen).</li>
+<li><strong>Endpoint <code>DELETE /admin/users/:id</code></strong> - Menghapus akun pengguna dari sistem.</li>
+<li><strong>RolesGuard &amp; RolesDecorator</strong> - Proteksi berlapis agar hanya Admin yang bisa mengakses endpoint di atas.</li>
+</ul>
+
+<p>Ariel akan fokus sebagai reviewer Pull Request dari anggota tim lain pada Sprint ini.</p>
+</div>
+
+<!-- ============ TIO ============ -->
+<div class="person-header"><h3 style="margin:0;color:#fff">👤 TUGAS TIO - Lab CRUD (Praktikum)</h3><span>Branch: fitur/backend-tio-lab</span></div>
+<div class="person-body">
+
+<h3>Deskripsi</h3>
+<p>Praktikum (Lab) adalah sesi praktik mandiri yang Dosen berikan kepada Mahasiswa di dalam mata kuliah. Dosen menulis instruksi langkah-langkah praktikum, lalu Mahasiswa membaca dan mengerjakannya secara mandiri. Tugas kamu di Sprint ini adalah membangun seluruh API manajemen praktikum dari nol: mulai dari pembuatan sesi baru, daftar praktikum, detail instruksi, sampai pengeditan dan penghapusan. Kamu juga bertanggung jawab menyiapkan tabel <code>LabSubmission</code> di database agar Dimas bisa langsung menggunakannya untuk fitur pengumpulan hasil praktikum. API yang kamu buat nanti akan dipakai oleh Frontend untuk merender halaman daftar praktikum, halaman detail instruksi, dan form kelola praktikum oleh dosen.</p>
+
+<h3>Langkah-Langkah</h3>
+
+<h4 class="step-title">A. Persiapan Awal (Sinkronisasi Laptop)</h4>
+<p>Karena sudah banyak perubahan di <code>develop</code> (Sprint 1-3 sudah di-merge semua), laptop kamu kemungkinan besar sudah tidak sinkron. Untuk menghindari error, conflict, atau file duplikat, <strong>WAJIB</strong> jalankan perintah di bawah ini secara berurutan:</p>
+<pre>
+# 1. Pindah ke branch develop
+git checkout develop
+
+# 2. Ambil informasi terbaru dari GitHub tanpa menggabungkannya dulu
+git fetch origin
+
+# 3. HAPUS semua modifikasi lokal dan paksa laptop menyamakan 100% dengan GitHub
+git reset --hard origin/develop
+
+# 4. HAPUS semua file/folder asing atau duplikat yang tidak terdaftar di GitHub
+git clean -fd
+
+# 5. Sinkronkan ulang semua library agar tidak error
+npm install
+
+# 6. Masuk ke folder API dan sinkronkan database
+cd apps/api
+npx prisma generate
+npx prisma migrate dev
+
+# 7. Buat branch baru khusus untuk tugas kamu
+git checkout -b fitur/backend-tio-lab
+</pre>
+
+<h4 class="step-title">B. Pembaruan Database (Prisma)</h4>
+<ol>
+<li>Buka file skema database di <code>apps/api/prisma/schema.prisma</code>.</li>
+<li>Model <code>PracticalLab</code> sudah ada di sana, kamu <strong>tidak perlu membuatnya lagi</strong>. Tapi kamu perlu menambahkan model baru bernama <code>LabSubmission</code>. Model ini fungsinya sama seperti <code>AssignmentSubmission</code> yang sudah ada, yaitu sebagai tempat menyimpan data pengumpulan hasil praktikum mahasiswa. Kamu bisa melihat struktur <code>AssignmentSubmission</code> di file yang sama sebagai referensi polanya.</li>
+<li>Di dalam model <code>LabSubmission</code>, pastikan ada: field ID (UUID), field <code>labId</code> yang merujuk ke <code>PracticalLab</code>, field <code>studentId</code> yang merujuk ke <code>User</code>, field <code>fileUrl</code> dan <code>note</code> untuk menyimpan hasil kerja mahasiswa, field <code>status</code> bertipe String (default <code>"PENDING"</code>, nanti bisa berubah jadi <code>"GRADED"</code>), field <code>score</code> (angka) dan <code>feedback</code> (teks) untuk penilaian dosen, serta timestamp <code>createdAt</code> dan <code>updatedAt</code>.</li>
+<li>Tambahkan aturan unik (unique constraint) kombinasi antara <code>labId</code> dan <code>studentId</code> agar satu mahasiswa tidak bisa submit dua kali di lab yang sama.</li>
+<li>Pada kedua relasi (<code>lab</code> dan <code>student</code>), pasang argumen <code>onDelete: Cascade</code> agar saat Lab atau User dihapus, data submission-nya otomatis ikut terhapus bersih.</li>
+<li>Jangan lupa tambahkan relasi balikan (array) di model <code>PracticalLab</code> dan model <code>User</code>, supaya Prisma bisa mengenali hubungan dua arah.</li>
+<li>Jalankan migrasi database:</li>
+<pre>npx prisma migrate dev --name add_lab_submission_model
+npx prisma generate</pre>
+</ol>
+
+<h4 class="step-title">C. Mulai Coding</h4>
+<p>Kamu perlu membuat modul baru di dalam folder <code>apps/api/src/lab/</code>. Gunakan generator NestJS untuk membuatnya secara otomatis (jalankan dari folder <code>apps/api</code>): generate module, controller, dan service untuk <code>lab</code>. Pastikan <code>PrismaService</code> terdaftar di providers modul tersebut.</p>
+
+<ol>
+<li><strong>Buka file service (<code>lab.service.ts</code>).</strong> Import <code>PrismaService</code> dan masukkan ke constructor. Kamu harus membuat 5 fungsi:
+<ul>
+<li><strong>Fungsi <code>create</code></strong> - Menerima 3 data: judul lab (<code>title</code>), instruksi panjang langkah-langkah praktikum (<code>instructions</code>), dan ID course-nya (<code>courseId</code>). Sebelum menyimpan, cek dulu apakah course-nya ada di database. Kalau tidak ada, kasih error <code>NotFoundException</code>. Lalu cek apakah user yang melakukan request adalah dosen pemilik course tersebut (bandingkan <code>course.instructorId</code> dengan <code>userId</code> dari token JWT). Kalau bukan pemilik, tolak dengan <code>ForbiddenException</code>. Kalau semua lolos, simpan data lab baru ke tabel <code>PracticalLab</code>.</li>
+<li><strong>Fungsi <code>findAll</code></strong> - Ambil semua data lab dari database. Sediakan opsi filter berdasarkan parameter URL <code>courseId</code> (contoh: <code>?courseId=xxx</code>), agar frontend bisa menampilkan daftar praktikum untuk mata kuliah tertentu saja. Return array berupa id, judul, dan tanggal pembuatan lab.</li>
+<li><strong>Fungsi <code>findOne</code></strong> - Ambil detail satu lab berdasarkan ID. Tujuan endpoint ini adalah agar mahasiswa bisa membaca panduan teknis praktikum. Return judul dan teks instruksi tata cara praktikum secara utuh. Kalau ID tidak ditemukan, kasih error <code>NotFoundException</code>.</li>
+<li><strong>Fungsi <code>update</code></strong> - Menerima perubahan judul dan/atau instruksi lab. Sebelum mengeksekusi update, wajib validasi bahwa user yang melakukan request adalah dosen pemilik course (sama seperti fungsi create). Kalau bukan, tolak dengan <code>ForbiddenException</code>.</li>
+<li><strong>Fungsi <code>remove</code></strong> - Hapus lab berdasarkan ID. Validasi kepemilikan dosen terlebih dahulu. Karena kamu sudah memasang <code>onDelete: Cascade</code> di model <code>LabSubmission</code>, saat lab dihapus maka seluruh riwayat pengumpulan tugas mahasiswa terkait lab tersebut akan ikut lenyap otomatis, kamu tidak perlu menghapusnya satu per satu.</li>
+</ul>
+</li>
+
+<li><strong>Buka file controller (<code>lab.controller.ts</code>).</strong> Masukkan <code>LabService</code> ke constructor. Buat 5 route endpoint:
+<ul>
+<li><code>POST /labs</code> - Buat praktikum baru. Pasang guard JWT agar hanya user yang sudah login yang bisa mengakses.</li>
+<li><code>GET /labs</code> - Daftar praktikum. Terima query parameter <code>courseId</code> yang bersifat opsional.</li>
+<li><code>GET /labs/:id</code> - Detail instruksi praktikum.</li>
+<li><code>PUT /labs/:id</code> - Edit praktikum. Pasang guard JWT.</li>
+<li><code>DELETE /labs/:id</code> - Hapus praktikum. Pasang guard JWT.</li>
+</ul>
+</li>
+
+<li><strong>Pastikan modul terdaftar.</strong> Buka <code>apps/api/src/app.module.ts</code>. Jika kamu menggunakan generator NestJS, modul biasanya sudah otomatis terdaftar. Kalau belum, tambahkan <code>LabModule</code> ke dalam array <code>imports</code>.</li>
+</ol>
+
+<h4 class="step-title">D. Selesai? Push ke GitHub</h4>
+<pre>git add .
+git commit -m "feat: lab crud dan model lab submission untuk praktikum"
+git push origin fitur/backend-tio-lab</pre>
+<p>Buka GitHub, buat <strong>Pull Request ke branch <code>develop</code></strong> (bukan main). Tugaskan Ariel sebagai reviewer.</p>
+</div>
+
+<!-- ============ SINTA ============ -->
+<div class="person-header"><h3 style="margin:0;color:#fff">👤 TUGAS SINTA - Testing API via Postman &amp; Bug Fixing</h3><span>Branch: fitur/backend-sinta-testing</span></div>
+<div class="person-body">
+
+<h3>Deskripsi</h3>
+<p>Di Sprint sebelumnya, seluruh endpoint Course dan Material sudah dibangun (termasuk endpoint <code>GET /courses/my</code> untuk menampilkan daftar matkul yang diikuti mahasiswa). Tugas kamu di Sprint ini adalah melakukan <strong>pengujian menyeluruh</strong> terhadap semua endpoint buatanmu tersebut menggunakan aplikasi Postman. Kamu bertanggung jawab memastikan bahwa setiap API benar-benar berfungsi sesuai spesifikasi, response JSON-nya rapi dan konsisten, serta pesan error HTTP (seperti 400, 403, 404) dikeluarkan dengan tepat ketika ada validasi yang gagal. Jika ditemukan bug apapun, kamu yang memperbaikinya langsung di kode, lalu dokumentasikan hasilnya. Hasil testing-mu akan dipakai Leader sebagai acuan apakah modul Course &amp; Material siap dikoneksikan ke frontend.</p>
+
+<h3>Langkah-Langkah</h3>
+
+<h4 class="step-title">A. Persiapan Awal (Sinkronisasi Laptop)</h4>
+<p>Karena sudah banyak perubahan di <code>develop</code> (Sprint 1-3 sudah di-merge semua), laptop kamu kemungkinan besar sudah tidak sinkron. Untuk menghindari error, conflict, atau file duplikat, <strong>WAJIB</strong> jalankan perintah di bawah ini secara berurutan:</p>
+<pre>
+# 1. Pindah ke branch develop
+git checkout develop
+
+# 2. Ambil informasi terbaru dari GitHub tanpa menggabungkannya dulu
+git fetch origin
+
+# 3. HAPUS semua modifikasi lokal dan paksa laptop menyamakan 100% dengan GitHub
+git reset --hard origin/develop
+
+# 4. HAPUS semua file/folder asing atau duplikat yang tidak terdaftar di GitHub
+git clean -fd
+
+# 5. Sinkronkan ulang semua library agar tidak error
+npm install
+
+# 6. Masuk ke folder API dan sinkronkan database
+cd apps/api
+npx prisma generate
+npx prisma migrate dev
+
+# 7. Buat branch baru khusus untuk tugas kamu
+git checkout -b fitur/backend-sinta-testing
+
+# 8. Jalankan server lokal
+npm run start:dev
+</pre>
+<p>Download dan install <strong>Postman</strong> dari <a href="https://www.postman.com/downloads/">postman.com/downloads</a> jika belum punya.</p>
+
+<h4 class="step-title">B. Skenario Testing Course</h4>
+<p>Buka Postman dan uji seluruh endpoint Course satu per satu. Lakukan simulasi lengkap mengikuti alur ini:</p>
+<ol>
+<li>Register akun Dosen dan akun Mahasiswa lewat <code>POST /auth/register</code>. Login keduanya untuk mendapatkan token masing-masing.</li>
+<li>Buat Mata Kuliah baru lewat <code>POST /courses</code> menggunakan token Dosen. Pastikan berhasil (status 201) dan response menampilkan data course yang dibuat.</li>
+<li>Lihat daftar semua matkul lewat <code>GET /courses</code>. Pastikan course yang baru dibuat muncul di daftar dan ada informasi nama dosen pengampu.</li>
+<li>Lihat detail satu matkul lewat <code>GET /courses/[ID course]</code>. Pastikan response memuat seluruh data relasi: materials, quizzes, assignments, dan labs (walau masih kosong, field-nya harus ada berupa array kosong).</li>
+<li>Enroll Mahasiswa ke matkul lewat <code>POST /courses/[ID course]/enroll</code> menggunakan token Mahasiswa. Pastikan berhasil. Lalu coba enroll lagi, pastikan ditolak dengan error 400 karena sudah terdaftar.</li>
+<li>Panggil <code>GET /courses/my</code> menggunakan token Mahasiswa. Pastikan course yang baru di-enroll muncul di daftar kelasku.</li>
+<li>Edit matkul lewat <code>PUT /courses/[ID course]</code> menggunakan token Dosen pemilik. Pastikan berhasil. Lalu coba edit menggunakan token dosen lain — pastikan ditolak dengan error 403 Forbidden.</li>
+<li>Hapus matkul lewat <code>DELETE /courses/[ID course]</code>. Pastikan berhasil dan mekanisme Cascade Delete bekerja, yaitu semua materi, kuis, tugas, lab, dan data enrollment yang terkait ikut terhapus dari database.</li>
+</ol>
+
+<h4 class="step-title">C. Skenario Testing Material</h4>
+<p>Buat lagi course baru untuk testing Material. Lalu uji seluruh endpoint Material:</p>
+<ol>
+<li>Upload materi tipe TEXT lewat <code>POST /materials</code>. Isi: judul, type "TEXT", konten teks, dan courseId. Pastikan berhasil.</li>
+<li>Upload materi tipe VIDEO lewat <code>POST /materials</code>. Isi: judul, type "VIDEO", dan URL video. Pastikan berhasil.</li>
+<li>Upload materi tipe DOCUMENT lewat <code>POST /materials</code>. Isi: judul, type "DOCUMENT", dan URL file. Pastikan berhasil.</li>
+<li>Lihat detail satu materi lewat <code>GET /materials/[ID materi]</code>. Pastikan response menampilkan judul, tipe, dan konten/URL secara utuh.</li>
+<li>Edit materi lewat <code>PUT /materials/[ID materi]</code> menggunakan token Dosen pemilik. Pastikan data berubah. Lalu coba edit menggunakan token dosen lain, pastikan error 403.</li>
+<li>Hapus materi lewat <code>DELETE /materials/[ID materi]</code> menggunakan token Dosen pemilik. Pastikan data terhapus dari database.</li>
+</ol>
+
+<h4 class="step-title">D. Bug Fixing</h4>
+<p>Jika ditemukan error/bug saat testing, buka file service yang relevan di folder <code>apps/api/src/course/</code> atau <code>apps/api/src/material/</code>. Perbaiki masalahnya langsung. Fokus pada: response JSON yang tidak rapi (field yang seharusnya tidak muncul), pesan error HTTP yang salah kode-nya (misal seharusnya 404 tapi malah 500), dan validasi yang terlewat.</p>
+
+<h4 class="step-title">E. Dokumentasi Hasil</h4>
+<p>Buat file baru <code>apps/api/test/TESTING_RESULTS.md</code>. Di dalamnya, catat hasil testing kamu dalam bentuk tabel: nomor, endpoint, skenario, status (PASS/FAIL), dan catatan jika ada bug yang diperbaiki. File ini yang akan di-review oleh Leader.</p>
+
+<h4 class="step-title">F. Selesai? Push ke GitHub</h4>
+<pre>git add .
+git commit -m "feat: testing api course dan material lengkap serta bug fixing"
+git push origin fitur/backend-sinta-testing</pre>
+<p>Buka GitHub , buat <strong>Pull Request ke branch <code>develop</code></strong> (bukan main). Tugaskan Ariel sebagai reviewer.</p>
+</div>
+
+<!-- ============ DIMAS ============ -->
+<div class="person-header"><h3 style="margin:0;color:#fff">👤 TUGAS DIMAS - Lab Submission &amp; Grading</h3><span>Branch: fitur/backend-dimas-lab-submission</span></div>
+<div class="person-body">
+
+<div class="alert alert-red"><strong>⚠️ TUNGGU TIO SELESAI DULU!</strong> Modul kamu bergantung pada modul Lab CRUD milik Tio. Jangan mulai coding sebelum PR Tio sudah di-merge ke <code>develop</code> oleh Leader. Setelah di-merge, jalankan ulang perintah sinkronisasi di halaman pertama panduan ini sebelum membuat branch baru.</div>
+
+<h3>Deskripsi</h3>
+<p>Setelah Dosen membuat sesi praktikum (dikerjakan Tio), giliran kamu membangun sisi mahasiswa dan penilaiannya. Konsepnya sama persis dengan fitur Submission &amp; Grading pada modul Assignment (tugas rutin) yang sudah ada di <code>apps/api/src/assignment/</code>, bedanya kali ini untuk praktikum (Lab). Kamu membuat 3 endpoint utama: jalur pengumpulan hasil praktikum oleh mahasiswa, halaman dosen untuk melihat siapa saja yang sudah mengumpulkan, dan fitur penilaian agar dosen bisa memberikan skor dan komentar. API yang kamu buat nanti akan dipakai Frontend untuk merender form submit hasil lab, tabel daftar submission, dan form grading dosen.</p>
+
+<h3>Langkah-Langkah</h3>
+
+<h4 class="step-title">A. Persiapan Awal (Sinkronisasi Laptop)</h4>
+<div class="alert"><strong>⏳ Pastikan PR Tio sudah di-merge ke <code>develop</code> sebelum memulai.</strong> Tanya Leader kalau belum yakin.</div>
+<p>Karena sudah banyak perubahan di <code>develop</code> (Sprint 1-3 + kode Tio sudah di-merge), laptop kamu kemungkinan besar sudah tidak sinkron. Untuk menghindari error, conflict, atau file duplikat, <strong>WAJIB</strong> jalankan perintah di bawah ini secara berurutan:</p>
+<pre>
+# 1. Pindah ke branch develop
+git checkout develop
+
+# 2. Ambil informasi terbaru dari GitHub tanpa menggabungkannya dulu
+git fetch origin
+
+# 3. HAPUS semua modifikasi lokal dan paksa laptop menyamakan 100% dengan GitHub
+git reset --hard origin/develop
+
+# 4. HAPUS semua file/folder asing atau duplikat yang tidak terdaftar di GitHub
+git clean -fd
+
+# 5. Sinkronkan ulang semua library agar tidak error
+npm install
+
+# 6. Masuk ke folder API dan sinkronkan database
+cd apps/api
+npx prisma generate
+npx prisma migrate dev
+
+# 7. Buat branch baru khusus untuk tugas kamu
+git checkout -b fitur/backend-dimas-lab-submission
+</pre>
+
+<h4 class="step-title">B. Database</h4>
+<p>Model <code>LabSubmission</code> sudah dibuat oleh Tio di Sprint ini. Kamu <strong>tidak perlu mengubah database</strong>. Cukup pastikan setelah kamu <code>git pull</code> dari develop terbaru, model <code>LabSubmission</code> sudah ada di file <code>schema.prisma</code> dengan field-field yang dibutuhkan: id, labId, studentId, fileUrl, note, status, score, feedback. Kalau belum ada, berarti PR Tio belum di-merge — tanya Leader dulu.</p>
+
+<h4 class="step-title">C. Mulai Coding</h4>
+<p>Buat modul baru di folder <code>apps/api/src/lab-submission/</code>. Gunakan generator NestJS (jalankan dari folder <code>apps/api</code>) untuk membuat module, controller, dan service untuk <code>lab-submission</code>. Pastikan <code>PrismaService</code> terdaftar di providers modul tersebut. Kamu bisa lihat modul <code>assignment</code> di folder <code>apps/api/src/assignment/</code> sebagai referensi pola kode — konsepnya sangat mirip.</p>
+
+<ol>
+<li><strong>Buka file service (<code>lab-submission.service.ts</code>).</strong> Import <code>PrismaService</code> dan masukkan ke constructor. Kamu harus membuat 3 fungsi utama:
+<ul>
+<li><strong>Fungsi <code>submit</code></strong> - Menerima ID lab (dari parameter URL), userId (dari token JWT), fileUrl (link file hasil praktikum), dan note (catatan tambahan, opsional). Lakukan 3 validasi berturut-turut sebelum menyimpan:
+<br>- <strong>Validasi 1:</strong> Cek lab-nya ada di database. Kalau tidak ada, kasih error <code>NotFoundException</code>.
+<br>- <strong>Validasi 2:</strong> Cek mahasiswa terdaftar di kelas lab tersebut. Query ke tabel <code>Enrollment</code> menggunakan kombinasi userId dan courseId milik lab. Kalau tidak terdaftar, tolak dengan <code>ForbiddenException</code>. Ini mencegah penyusup yang bukan anggota kelas mengumpulkan hasil.
+<br>- <strong>Validasi 3:</strong> Cek apakah mahasiswa sudah pernah submit sebelumnya untuk lab ini. Query ke tabel <code>LabSubmission</code> menggunakan kombinasi labId dan studentId. Kalau sudah ada, tolak dengan <code>BadRequestException</code>. Ini mencegah pengumpulan ganda.
+<br>Kalau ketiga validasi lolos, simpan data submission baru ke tabel <code>LabSubmission</code> dengan status awal <code>"PENDING"</code>.
+</li>
+<li><strong>Fungsi <code>getSubmissions</code></strong> - Menerima ID lab dan userId (dosen). Tujuannya agar dosen bisa melihat kompilasi siapa saja yang sudah mengumpulkan hasil praktikum. Cek dulu bahwa lab-nya ada dan userId adalah dosen pemilik course. Lalu query seluruh data submission untuk lab tersebut, termasuk nama lengkap dan email mahasiswanya (gunakan relasi include ke tabel User). Return array berupa nama mahasiswa, tautan file, stempel waktu pengumpulan, status penilaian (PENDING/GRADED), dan skor jika sudah dinilai.</li>
+<li><strong>Fungsi <code>grade</code></strong> - Menerima ID submission, userId (dosen), score (angka 0-100), dan feedback (teks komentar evaluatif, opsional). Cek submission ada di database. Cek bahwa userId adalah dosen pemilik course dari lab tersebut (ini membutuhkan query relasi berantai: submission > lab > course > instructorId). Update data submission: simpan nilai score, simpan teks feedback, dan ubah status dari <code>"PENDING"</code> menjadi <code>"GRADED"</code>. Setelah disimpan, mahasiswa akan bisa melihat nilainya secara transparan.</li>
+</ul>
+</li>
+
+<li><strong>Buka file controller (<code>lab-submission.controller.ts</code>).</strong> Karena endpoint-mu memiliki awalan URL yang berbeda-beda (<code>/labs/...</code> untuk submit dan lihat submission, serta <code>/lab-submissions/...</code> untuk grading), atur dekorator <code>@Controller()</code> tanpa prefix agar kamu bisa menulis path lengkap di setiap route. Buat 3 route:
+<ul>
+<li><code>POST /labs/:id/submit</code> - Mahasiswa kumpul hasil lab. Pasang guard JWT.</li>
+<li><code>GET /labs/:id/submissions</code> - Dosen lihat daftar submission. Pasang guard JWT.</li>
+<li><code>PUT /lab-submissions/:id/grade</code> - Dosen kasih nilai. Pasang guard JWT.</li>
+</ul>
+</li>
+
+<li><strong>Pastikan modul terdaftar.</strong> Cek <code>apps/api/src/app.module.ts</code>, pastikan modul <code>LabSubmissionModule</code> sudah ada di <code>imports</code>.</li>
+</ol>
+
+<h4 class="step-title">D. Selesai? Push ke GitHub</h4>
+<pre>git add .
+git commit -m "feat: lab submission dan grading praktikum lengkap"
+git push origin fitur/backend-dimas-lab-submission</pre>
+<p>Buka GitHub, buat <strong>Pull Request ke branch <code>develop</code></strong> (bukan main). Tugaskan Ariel sebagai reviewer.</p>
+</div>
+
+<!-- ============ REMINDER ============ -->
+<h2>📌 Reminder Final</h2>
+<ul>
+<li><strong>Clean Code:</strong> Tulis struktur kode yang rapi (penamaan variabel logis), tangani error (misal: <code>NotFoundException</code>, <code>ForbiddenException</code>), dan bersihkan <code>console.log</code> sebelum commit.</li>
+<li>Selalu gunakan pola eksekusi asinkron (<code>async</code>/<code>await</code>) saat membungkus panggilan operasi ke layanan database Prisma.</li>
+<li>Jika kamu mengalami Merge Conflict saat melakukan integrasi atau <code>git pull</code>, jangan mengambil risiko menyelesaikan konflik secara paksa jika kamu ragu. Segera komunikasikan di grup atau hubungi Leader.</li>
+<li><strong>Deadline Sprint 4: Rabu, 28 Mei 2026.</strong> Targetkan penyelesaian coding sebelum tanggal tersebut untuk menyisakan waktu bagi proses peninjauan kode (code review).</li>
+</ul>
+
+<hr>
+<p style="font-size:11px;color:#999;text-align:center;margin-top:30px"><em>Dokumen panduan ini disusun sedemikian rupa untuk memastikan sinkronisasi teknis mendalam dan pemahaman logika bisnis antar seluruh punggawa tim backend Ruang Dosen.</em></p>
+
+</body>
+</html>
