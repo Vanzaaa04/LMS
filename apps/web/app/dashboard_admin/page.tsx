@@ -15,6 +15,13 @@ const parseSender = (msg: string) => {
   return { sender: null, body: msg };
 };
 
+const TODAY_PLANS = [
+  { name: "UX Fundamental", time: "09:00 - 10:30 WIB", dot: "teal" },
+  { name: "Review Tugas Mahasiswa", time: "11:00 - 12:00 WIB", dot: "orange" },
+  { name: "Webinar AI in Education", time: "13:00 - 14:30 WIB", dot: "purple" },
+  { name: "Rapat Kurikulum", time: "15:00 - 16:00 WIB", dot: "green" },
+];
+
 export default function DashboardAdminPage() {
   const [coursesOpen, setCoursesOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -43,11 +50,9 @@ export default function DashboardAdminPage() {
           return;
         }
 
-        // Ambil data user dari sessionStorage
         let currentUser = JSON.parse(sessionStorage.getItem("user") || "null");
         if (currentUser) setUser(currentUser);
 
-        // Fetch profil terbaru dari /auth/profile
         try {
           const profileRes = await fetch(buildApiUrl("/auth/profile"), {
             headers: { Authorization: `Bearer ${token}` },
@@ -61,24 +66,19 @@ export default function DashboardAdminPage() {
           console.error("Failed to fetch profile", e);
         }
 
-        // Fetch semua courses (admin melihat semua)
         const coursesRes = await fetch(buildApiUrl("/courses"), {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (coursesRes.ok) {
           const allCourses = await coursesRes.json();
-          setCourses(allCourses.slice(0, 3)); // Tampilkan 3 kursus terbaru
+          setCourses(allCourses.slice(0, 3));
 
-          // Kalkulasi statistik
           const totalStudents = allCourses.reduce(
             (acc: number, curr: any) => acc + (curr._count?.enrollments || 0),
             0
           );
 
-          // Hitung unique lecturers
           const lecturerIds = new Set(
             allCourses
               .filter((c: any) => c.instructor?.id || c.instructorId)
@@ -148,36 +148,31 @@ export default function DashboardAdminPage() {
     }
   };
 
-  const filteredCourses = courses.filter(c => 
-    c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredCourses = courses.filter(c =>
+    c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (c.instructor?.name || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        Memuat...
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f7fafa" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "36px", height: "36px", border: "3px solid #e4eded", borderTopColor: "#007272", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+          <p style={{ color: "#7aa3a3", fontSize: "14px", fontWeight: 500 }}>Memuat dashboard...</p>
+        </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
   return (
     <div className="admin-dashboard app-wrapper">
-      {/* ============================================================
-          SIDEBAR
-      ============================================================ */}
+      {/* SIDEBAR */}
       <AdminSidebar activeTab="dashboard" />
 
-      {/* ============================================================
-          MAIN CONTENT
-      ============================================================ */}
+      {/* MAIN CONTENT */}
       <main className="main-content">
 
         {/* TOP BAR */}
@@ -186,62 +181,61 @@ export default function DashboardAdminPage() {
             <p className="page-title">Dashboard Admin</p>
             <p className="page-subtitle">
               {new Date().toLocaleDateString("id-ID", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
+                weekday: "long", year: "numeric", month: "long", day: "numeric",
               })}
             </p>
           </div>
+
           <div className="top-bar-right" style={{ position: 'relative' }}>
+            {/* Search */}
             <div className="search-bar">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-              <input 
-                type="search" 
-                placeholder="Cari kursus, pengguna..." 
+              <input
+                type="search"
+                placeholder="Cari kursus, pengguna..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
-            <button className="icon-btn" id="notif-btn" title="Notifikasi" onClick={() => setNotifOpen(!notifOpen)} style={{ position: 'relative' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Notif Button */}
+            <button className="icon-btn" title="Notifikasi" onClick={() => setNotifOpen(!notifOpen)}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 01-3.46 0" />
               </svg>
-              {notifications.filter(n => !n.isRead).length > 0 && (
-                <span className="notif-dot" style={{ position: 'absolute', top: 4, right: 4, width: 8, height: 8, background: '#EF4444', borderRadius: '50%' }}></span>
+              {unreadCount > 0 && (
+                <span className="notif-dot"></span>
               )}
             </button>
 
             {/* Notification Dropdown */}
             {notifOpen && (
-              <div style={{ position: 'absolute', top: '50px', right: '40px', width: '320px', background: 'white', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100, overflow: 'hidden' }}>
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>Notifikasi Sistem</span>
-                  <button onClick={() => setShowNotifForm(!showNotifForm)} style={{ background: 'var(--primary)', color: 'white', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', border: 'none', cursor: 'pointer' }}>
+              <div style={{
+                position: 'absolute', top: '48px', right: '44px',
+                width: '320px', background: 'white',
+                border: '1px solid #e4eded', borderRadius: '14px',
+                boxShadow: '0 12px 28px rgba(0,114,114,0.12)', zIndex: 100, overflow: 'hidden'
+              }}>
+                <div style={{ padding: '14px 16px', borderBottom: '1px solid #e4eded', fontWeight: 600, fontSize: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#0d2626' }}>
+                  <span>Notifikasi</span>
+                  <button onClick={() => setShowNotifForm(!showNotifForm)} style={{ background: '#007272', color: 'white', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
                     {showNotifForm ? 'Batal' : '+ Buat'}
                   </button>
                 </div>
                 {showNotifForm ? (
                   <form onSubmit={handleCreateNotif} style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <input required type="text" placeholder="Judul Pengumuman" value={notifForm.title} onChange={e => setNotifForm({...notifForm, title: e.target.value})} style={{ padding: '8px', border: '1px solid var(--border)', borderRadius: '6px' }} />
-                    <textarea required placeholder="Isi Pengumuman..." value={notifForm.message} onChange={e => setNotifForm({...notifForm, message: e.target.value})} style={{ padding: '8px', border: '1px solid var(--border)', borderRadius: '6px', resize: 'none', height: '60px' }}></textarea>
+                    <input required type="text" placeholder="Judul Pengumuman" value={notifForm.title}
+                      onChange={e => setNotifForm({ ...notifForm, title: e.target.value })}
+                      style={{ padding: '9px 12px', border: '1px solid #e4eded', borderRadius: '8px', fontSize: '13px', outline: 'none', fontFamily: 'inherit' }} />
+                    <textarea required placeholder="Isi Pengumuman..." value={notifForm.message}
+                      onChange={e => setNotifForm({ ...notifForm, message: e.target.value })}
+                      style={{ padding: '9px 12px', border: '1px solid #e4eded', borderRadius: '8px', resize: 'none', height: '70px', fontSize: '13px', outline: 'none', fontFamily: 'inherit' }} />
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <button type="button" onClick={() => setShowNotifForm(false)} style={{ padding: '6px 12px', background: '#eee', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Batal</button>
-                      <button type="submit" style={{ padding: '6px 12px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Kirim</button>
+                      <button type="button" onClick={() => setShowNotifForm(false)} style={{ padding: '7px 14px', background: '#f7fafa', border: '1px solid #e4eded', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontFamily: 'inherit' }}>Batal</button>
+                      <button type="submit" style={{ padding: '7px 14px', background: '#007272', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 600, fontFamily: 'inherit' }}>Kirim</button>
                     </div>
                   </form>
                 ) : (
@@ -250,47 +244,39 @@ export default function DashboardAdminPage() {
                       notifications.map((n: any) => {
                         const { sender, body } = parseSender(n.message);
                         return (
-                          <div key={n.id} onClick={() => handleNotifClick(n)} style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', fontSize: '13px', background: n.isRead ? 'transparent' : '#f0f7ff', cursor: 'pointer' }}>
-                            <span style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '10px' }}>{new Date(n.createdAt).toLocaleDateString('id-ID')}</span>
-                            <strong style={{ display: 'block', marginBottom: '2px' }}>{n.title}</strong>
+                          <div key={n.id} onClick={() => handleNotifClick(n)}
+                            style={{ padding: '12px 16px', borderBottom: '1px solid #e4eded', fontSize: '13px', background: n.isRead ? 'transparent' : '#f0fafa', cursor: 'pointer', transition: 'background 0.15s' }}>
+                            <span style={{ display: 'block', color: '#7aa3a3', marginBottom: '3px', fontSize: '10px' }}>
+                              {new Date(n.createdAt).toLocaleDateString('id-ID')}
+                            </span>
+                            <strong style={{ display: 'block', marginBottom: '3px', color: '#0d2626' }}>{n.title}</strong>
                             {sender && (
-                              <span style={{
-                                display: 'inline-block', fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '12px', marginBottom: '6px',
-                                background: sender.startsWith('Admin') ? '#EDE9FE' : '#DBEAFE',
-                                color: sender.startsWith('Admin') ? '#7C3AED' : '#2563EB',
-                              }}>
+                              <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '99px', marginBottom: '4px', background: sender.startsWith('Admin') ? '#EDE9FE' : '#e6f4f4', color: sender.startsWith('Admin') ? '#7C3AED' : '#007272' }}>
                                 {sender}
                               </span>
                             )}
-                            <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{body}</div>
+                            <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#3d6363' }}>{body}</div>
                           </div>
                         );
                       })
                     ) : (
-                      <div style={{ padding: '20px', textAlign: 'center', color: '#999', fontSize: '13px' }}>Belum ada notifikasi</div>
+                      <div style={{ padding: '24px', textAlign: 'center', color: '#7aa3a3', fontSize: '13px' }}>Belum ada notifikasi</div>
                     )}
                   </div>
                 )}
               </div>
             )}
 
-            <button className="icon-btn" id="settings-btn" title="Pengaturan" onClick={() => alert("Pengaturan akun sedang dikembangkan!")}>
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+            {/* Settings */}
+            <button className="icon-btn" title="Pengaturan" onClick={() => alert("Pengaturan akun sedang dikembangkan!")}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="3" />
                 <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M21 12h-2M5 12H3M12 3V1M12 23v-2" />
               </svg>
             </button>
 
-            <button className="avatar-btn" id="profile-btn" title="Profil" onClick={() => alert("Profil pengguna sedang dikembangkan!")}>
+            {/* Avatar */}
+            <button className="avatar-btn" title="Profil" onClick={() => alert("Profil pengguna sedang dikembangkan!")}>
               {getInitials(user?.name)}
             </button>
           </div>
@@ -299,406 +285,322 @@ export default function DashboardAdminPage() {
         {/* DASHBOARD CONTENT */}
         <div className="dashboard-content">
 
-          {/* ---- WELCOME BANNER ---- */}
+          {/* QUICK SUMMARY BANNER */}
           <section className="welcome-banner">
             <div className="banner-decoration">
               <div className="banner-circle banner-circle-1"></div>
               <div className="banner-circle banner-circle-2"></div>
               <div className="banner-circle banner-circle-3"></div>
               <div className="banner-dots"></div>
+              <div className="banner-sparkle-shape">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 0C50 27.6142 38.8071 50 11.1929 50C38.8071 50 50 72.3858 50 100C50 72.3858 61.1929 50 88.8071 50C61.1929 50 50 27.6142 50 0Z" fill="white" fillOpacity="0.85" />
+                </svg>
+              </div>
+              <div className="banner-sparkle-shape-sm">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 0C50 27.6142 38.8071 50 11.1929 50C38.8071 50 50 72.3858 50 100C50 72.3858 61.1929 50 88.8071 50C61.1929 50 50 27.6142 50 0Z" fill="white" fillOpacity="0.7" />
+                </svg>
+              </div>
             </div>
             <div className="banner-content">
-              <p className="banner-greeting">Panel Administrasi</p>
-              <h2 className="banner-title">
-                Halo, {user?.name || "Admin"}! 👋
-              </h2>
+              <p className="banner-greeting">ADMIN DASHBOARD</p>
+              <h2 className="banner-title">Selamat {new Date().getHours() < 12 ? "Pagi" : new Date().getHours() < 15 ? "Siang" : new Date().getHours() < 18 ? "Sore" : "Malam"}, {user?.name?.split(" ")[0] || "Admin"}! 👋</h2>
               <p className="banner-subtitle">
-                Terdapat{" "}
-                <strong>{stats.pendingSubmissions} tugas mahasiswa</strong> yang
-                menunggu persetujuan hari ini.
+                {stats.pendingSubmissions > 0
+                  ? <>Ada <strong>{stats.pendingSubmissions} tugas pending</strong> yang perlu ditinjau hari ini.</>
+                  : <>Semua tugas sudah ditinjau. Platform berjalan dengan baik!</>
+                }
               </p>
             </div>
-            <div className="banner-actions">
-              <button className="btn-primary-white" id="review-submissions-btn" onClick={() => router.push('/dashboard_admin/courses')}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
-                Tinjau Tugas
-              </button>
-              <button className="btn-outline-white" id="manage-users-btn" onClick={() => router.push('/dashboard_admin/users')}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 00-3-3.87" />
-                  <path d="M16 3.13a4 4 0 010 7.75" />
-                </svg>
-                Kelola Pengguna
-              </button>
-            </div>
-          </section>
-
-          {/* ---- STAT CARDS ---- */}
-          <section className="stat-overview">
-            <div className="stat-card">
-              <div className="stat-card-accent accent-blue"></div>
-              <div className="stat-icon-wrap blue">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-                </svg>
+            <div className="banner-stats-row">
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.totalCourses}</span>
+                <span className="banner-stat-mini-label">Kursus</span>
               </div>
-              <div className="stat-body">
-                <p className="stat-label">Total Mata Kuliah</p>
-                <p className="stat-value">{stats.totalCourses}</p>
-                <p className="stat-change neutral">Seluruh Platform</p>
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.totalLecturers}</span>
+                <span className="banner-stat-mini-label">Dosen</span>
               </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-card-accent accent-purple"></div>
-              <div className="stat-icon-wrap purple">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.totalStudents}</span>
+                <span className="banner-stat-mini-label">Mahasiswa</span>
               </div>
-              <div className="stat-body">
-                <p className="stat-label">Total Dosen</p>
-                <p className="stat-value">{stats.totalLecturers}</p>
-                <p className="stat-change neutral">Terdaftar Aktif</p>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-card-accent accent-green"></div>
-              <div className="stat-icon-wrap green">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 00-3-3.87" />
-                  <path d="M16 3.13a4 4 0 010 7.75" />
-                </svg>
-              </div>
-              <div className="stat-body">
-                <p className="stat-label">Total Mahasiswa</p>
-                <p className="stat-value">{stats.totalStudents}</p>
-                <p className="stat-change up">Di semua mata kuliah</p>
-              </div>
-            </div>
-
-            <div className="stat-card alert-card">
-              <div className="stat-card-accent accent-orange"></div>
-              <div className="stat-icon-wrap orange">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="12" y1="18" x2="12" y2="12" />
-                  <line x1="9" y1="15" x2="15" y2="15" />
-                </svg>
-              </div>
-              <div className="stat-body">
-                <p className="stat-label">Tugas Pending</p>
-                <p className="stat-value">{stats.pendingSubmissions}</p>
-                <p className="stat-change" style={{ color: "var(--orange)" }}>
-                  Perlu ditinjau segera
-                </p>
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.pendingSubmissions}</span>
+                <span className="banner-stat-mini-label">Pending</span>
               </div>
             </div>
           </section>
 
-          {/* ---- MAIN BODY ---- */}
-          <div className="main-body-layout">
-
-            {/* Course Management */}
-            <section className="course-management">
-              <div className="section-header">
-                <h3 className="section-title">Manajemen Mata Kuliah</h3>
-                <Link href="/dashboard_admin/courses" className="view-all-link">
-                  Lihat Semua Mata Kuliah →
-                </Link>
-              </div>
-
-              <div className="course-grid">
-                {courses.length > 0 ? (
-                  courses.map((course, index) => {
-                    const colorVariants = ["blue", "purple", "green"];
-                    const color = colorVariants[index % colorVariants.length];
-                    const progressValues = ["65%", "40%", "80%"];
-                    const fillColors = ["blue", "purple", "green"];
-                    const progress = progressValues[index % progressValues.length];
-                    const fillColor = fillColors[index % fillColors.length];
-                    return (
-                      <div className="course-card" key={course.id}>
-                        <div className="course-card-top">
-                          <div className={`course-icon-wrap ${color}`}>
-                            {index % 3 === 0 ? (
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="16 18 22 12 16 6" />
-                                <polyline points="8 6 2 12 8 18" />
-                              </svg>
-                            ) : index % 3 === 1 ? (
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <line x1="18" y1="20" x2="18" y2="10" />
-                                <line x1="12" y1="20" x2="12" y2="4" />
-                                <line x1="6" y1="20" x2="6" y2="14" />
-                              </svg>
-                            ) : (
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-                              </svg>
-                            )}
-                          </div>
-                          <span className="course-badge">
-                            {course.id.substring(0, 8).toUpperCase()}
-                          </span>
-                        </div>
-                        <h4 className="course-name">{course.title}</h4>
-                        <div className="course-meta">
-                          <span>
-                            {course.instructor?.name ||
-                              course.description?.substring(0, 20) + "..." ||
-                              "Tanpa deskripsi"}
-                          </span>
-                          <span className="course-meta-dot"></span>
-                          <span>{course._count?.enrollments || 0} Mahasiswa</span>
-                        </div>
-                        <div className="progress-section" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '12px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                            <span>Total Modul</span>
-                            <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{course._count?.modules || 0} Modul</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                            <span>Kapasitas & SKS</span>
-                            <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{course.enrollmentCap} Siswa · {course.credits} SKS</span>
-                          </div>
-                        </div>
-                        <div className="course-actions">
-                          <button className="btn-filled" style={{ width: '100%' }} onClick={() => router.push(`/dashboard_admin/courses/${course.id}`)}>Kelola Mata Kuliah</button>
+          <section className="featured-courses-section">
+            <div className="section-header">
+              <h3 className="section-title">My Course</h3>
+              <Link href="/dashboard_admin/courses" className="see-all-btn-link">
+                See All Courses
+              </Link>
+            </div>
+            <div className="featured-courses-grid">
+              {courses.slice(0, 3).map((course, index) => {
+                const ratings = ["4.6", "4.5", "4.9"];
+                const times = ["19 hr 53 min", "20 hr 22 min", "22 hr 38 min"];
+                const coverGradients = [
+                  "linear-gradient(135deg, #0d9488 0%, #115e59 100%)",
+                  "linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)",
+                  "linear-gradient(135deg, #0284c7 0%, #075985 100%)"
+                ];
+                
+                return (
+                  <div className="featured-course-card" key={course.id} onClick={() => router.push(`/dashboard_admin/courses/${course.id}`)}>
+                    <div className="course-card-banner" style={{ background: coverGradients[index % 3] }}>
+                      <span className="course-card-id-badge">{course.id.substring(0, 8).toUpperCase()}</span>
+                      <div className="course-banner-stars-art">✦</div>
+                    </div>
+                    <div className="course-card-body">
+                      <div className="course-card-meta-row">
+                        <span className="course-card-title-text">{course.title}</span>
+                        <div className="course-card-rating">
+                          <span className="rating-num">{ratings[index % 3]}</span>
+                          <span className="rating-star">★</span>
                         </div>
                       </div>
-                    );
-                  })
-                ) : (
-                  <div
-                    style={{
-                      padding: "30px",
-                      textAlign: "center",
-                      border: "1px dashed var(--border)",
-                      borderRadius: "var(--radius-lg)",
-                    }}
-                  >
-                    <p
-                      style={{
-                        color: "var(--text-muted)",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      Belum ada mata kuliah yang tersedia.
-                    </p>
-                    <button className="btn-filled" onClick={() => router.push('/dashboard_admin/courses/create')}>Buat Mata Kuliah Baru</button>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Recent Submissions Panel */}
-            <aside className="submissions-panel">
-              <div className="panel-header">
-                <div className="section-header">
-                  <h3 className="section-title">Tugas Terbaru</h3>
-                  <Link href="/dashboard_admin/courses" className="view-all-link">
-                    Lihat Semua
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="panel-body">
-                {/* Submission 1 */}
-                <div className="submission-item">
-                  <div className="submission-top">
-                    <div className="submission-student">
-                      <div className="student-avatar avatar-blue">BS</div>
-                      <span className="student-name">Budi Santoso</span>
+                      <div className="course-card-mentor">
+                        <div className="mentor-avatar">{getInitials(course.instructor?.name || "D")}</div>
+                        <span className="mentor-name">{course.instructor?.name || "Belum Ditentukan"}</span>
+                      </div>
+                      <div className="course-card-progress-bar-wrap">
+                        <div className="progress-bar-track">
+                          <div 
+                            className="progress-bar-fill" 
+                            style={{ 
+                              width: course._count?.enrollments && course.enrollmentCap 
+                                ? `${Math.min(100, Math.round((course._count.enrollments / course.enrollmentCap) * 100))}%` 
+                                : "25%" 
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="course-card-footer">
+                        <div className="footer-meta-item">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /></svg>
+                          <span>{course._count?.modules || 0} Modules</span>
+                        </div>
+                        <div className="footer-meta-item">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                          <span>{times[index % 3]}</span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="submission-time">2j lalu</span>
                   </div>
-                  <p className="submission-title">Binary Tree Implementation</p>
-                  <div className="submission-footer">
-                    <span className="tag tag-blue">Data Structures</span>
-                    <span className="status-badge status-review">
-                      Perlu Ditinjau
-                    </span>
-                  </div>
-                </div>
+                );
+              })}
+            </div>
+          </section>
 
-                {/* Submission 2 */}
-                <div className="submission-item">
-                  <div className="submission-top">
-                    <div className="submission-student">
-                      <div className="student-avatar avatar-green">SA</div>
-                      <span className="student-name">Siti Aminah</span>
-                    </div>
-                    <span className="submission-time">4j lalu</span>
-                  </div>
-                  <p className="submission-title">Graph Traversal Essay</p>
-                  <div className="submission-footer">
-                    <span className="tag tag-purple">Algorithm Analysis</span>
-                    <span className="status-badge status-review">
-                      Perlu Ditinjau
-                    </span>
-                  </div>
-                </div>
-
-                {/* Submission 3 */}
-                <div className="submission-item">
-                  <div className="submission-top">
-                    <div className="submission-student">
-                      <div className="student-avatar avatar-orange">RF</div>
-                      <span className="student-name">Reza Fahlevi</span>
-                    </div>
-                    <span className="submission-time">Kemarin</span>
-                  </div>
-                  <p className="submission-title">Neural Network Basics</p>
-                  <div className="submission-footer">
-                    <span className="tag tag-pink">Machine Learning</span>
-                    <span className="status-badge status-graded">
-                      Sudah Dinilai
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="panel-footer">
-                <Link
-                  href="/dashboard_admin/courses"
-                  className="view-all-btn"
-                  id="view-all-submissions-btn"
-                >
-                  Lihat Semua Tugas
+          <section className="top-performance-section">
+            <div className="section-header">
+              <h3 className="section-title">Top Performance Course</h3>
+              <div className="section-actions-group">
+                <button className="table-filter-btn" type="button" onClick={() => alert("Filter aktif!")}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
+                  Filter
+                </button>
+                <Link href="/dashboard_admin/courses" className="see-all-btn-link">
+                  See All Courses
                 </Link>
               </div>
-            </aside>
+            </div>
 
+            <div className="performance-table-wrapper">
+              <table className="performance-table">
+                <thead>
+                  <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Level</th>
+                    <th>Mentor</th>
+                    <th>Completion Rate</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCourses.map((course, index) => {
+                    const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
+                    const levelColors = ["beginner", "intermediate", "advanced", "expert"];
+                    const currentLevel = levels[index % 4];
+                    const currentClass = levelColors[index % 4];
+                    
+                    const completionPct = course._count?.enrollments && course.enrollmentCap
+                      ? Math.min(100, Math.round((course._count.enrollments / course.enrollmentCap) * 100))
+                      : 88 + (index * 3) % 12;
+
+                    return (
+                      <tr key={course.id}>
+                        <td className="col-id">{course.id.substring(0, 8).toUpperCase()}</td>
+                        <td className="col-name">
+                          <span className="course-title-bold">{course.title}</span>
+                          <span className="course-subtitle-light">{course.credits} SKS · {course._count?.modules || 0} Modul</span>
+                        </td>
+                        <td className="col-level">
+                          <span className={`level-pill-badge ${currentClass}`}>{currentLevel}</span>
+                        </td>
+                        <td className="col-mentor">
+                          <div className="mentor-profile-info">
+                            <div className="mentor-avatar-sm">{getInitials(course.instructor?.name || "M")}</div>
+                            <span className="mentor-name-text">{course.instructor?.name || "Belum Ditentukan"}</span>
+                          </div>
+                        </td>
+                        <td className="col-rate">
+                          <span className="completion-pct-text">{completionPct}%</span>
+                        </td>
+                        <td className="col-action">
+                          <div className="action-dots-button-wrap">
+                            <button className="row-ellipsis-btn" type="button" onClick={() => router.push(`/dashboard_admin/courses/${course.id}`)}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <footer className="footer">
+          <p><strong>AFADIA Academy</strong> &copy; 2024 Platform Akademik. All rights reserved.</p>
+          <div className="footer-links">
+            <button onClick={() => alert("Kebijakan Privasi:\n\nSemua data Anda terlindungi dengan enkripsi SSL.")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Kebijakan Privasi</button>
+            <button onClick={() => alert("Syarat Layanan:\n\nDengan menggunakan AFADIA Academy, Anda setuju mematuhi tata tertib kampus.")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Syarat Layanan</button>
+            <button onClick={() => alert("Pusat Bantuan:\n\nEmail: support@afadia.ac.id")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Pusat Bantuan</button>
+            <button onClick={() => alert("Hubungi Support:\n\nEmail: support@afadia.ac.id\nJam: Senin–Jumat 08.00–17.00 WIB")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Hubungi Support</button>
+          </div>
+        </footer>
+      </main>
+
+      <aside className="right-panel">
+        <div className="right-greeting">
+          <div className="right-greeting-avatar">{getInitials(user?.name)}</div>
+          <div className="right-greeting-text">
+            <p className="right-greeting-name">Good Morning, {user?.name?.split(" ")[0] || "Admin"}! 👋</p>
+            <p className="right-greeting-sub">Focus today, mastery tomorrow.</p>
           </div>
         </div>
 
-        {/* FOOTER */}
-        <footer className="footer">
-          <p>
-            <strong>AFADIA Academy</strong> &copy; 2024 Platform Akademik. All
-            rights reserved.
-          </p>
-          <div className="footer-links">
-            <button onClick={() => alert("Kebijakan Privasi:\n\nSemua data Anda terlindungi dengan enkripsi SSL. Kami tidak membagikan data pribadi atau riwayat nilai Anda kepada pihak ketiga mana pun tanpa persetujuan Anda.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Kebijakan Privasi</button>
-            <button onClick={() => alert("Syarat Layanan:\n\nDengan menggunakan AFADIA Academy, Anda setuju untuk menjaga kerahasiaan kredensial login Anda, tidak melakukan kecurangan akademik, dan mematuhi tata tertib kampus.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Syarat Layanan</button>
-            <button onClick={() => alert("Pusat Bantuan:\n\nJika menemui kendala teknis atau kesalahan data, silakan buat laporan ke support@afadia.ac.id atau hubungi helpdesk IT kampus.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Pusat Bantuan</button>
-            <button onClick={() => alert("Hubungi Support:\n\nEmail: support@afadia.ac.id\nJam Operasional: Senin - Jumat, 08.00 - 17.00 WIB")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Hubungi Support</button>
-          </div>
-        </footer>
-
-      </main>
-
-      {/* Notification Modal Overlay */}
-      {selectedNotif && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', padding: '20px' }} onClick={() => setSelectedNotif(null)}>
-          <div style={{ background: 'white', borderRadius: '16px', maxWidth: '500px', width: '100%', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }} onClick={e => e.stopPropagation()}>
-            <div style={{ padding: '20px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontWeight: 700, fontSize: '16px' }}>Detail Notifikasi</h3>
-              <button onClick={() => setSelectedNotif(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', fontSize: '20px' }}>✕</button>
+        <div className="right-stats">
+          <div className="right-stat-item">
+            <div className="right-stat-icon teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+              </svg>
             </div>
-            <div style={{ padding: '24px' }}>
-              <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, color: '#111' }}>{selectedNotif.title}</h4>
-              <p style={{ margin: '0 0 24px 0', fontSize: '12px', color: '#666' }}>{new Date(selectedNotif.createdAt).toLocaleString('id-ID')}</p>
-              <div style={{ fontSize: '14px', lineHeight: 1.6, color: '#333', background: '#f9f9f9', padding: '16px', borderRadius: '12px', border: '1px solid #eee' }}>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Ongoing Courses</p>
+              <p className="right-stat-value">{stats.totalCourses}</p>
+            </div>
+          </div>
+
+          <div className="right-stat-item">
+            <div className="right-stat-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Total Lecturers</p>
+              <p className="right-stat-value">{stats.totalLecturers}</p>
+            </div>
+          </div>
+
+          <div className="right-stat-item">
+            <div className="right-stat-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
+              </svg>
+            </div>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Total Students</p>
+              <p className="right-stat-value">{stats.totalStudents}</p>
+            </div>
+          </div>
+
+          <div className="right-stat-item">
+            <div className="right-stat-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="12" y1="18" x2="12" y2="12" /><line x1="9" y1="15" x2="15" y2="15" />
+              </svg>
+            </div>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Tugas Pending</p>
+              <p className="right-stat-value">{stats.pendingSubmissions}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="right-plans">
+          <div className="right-plans-header">
+            <h3 className="right-plans-title">Schedule</h3>
+            <button className="right-plans-more" type="button" onClick={() => alert("Menu lainnya!")}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg>
+            </button>
+          </div>
+          
+          <div className="calendar-widget-card">
+            <div className="calendar-header-row">
+              <span className="nav-arrow" onClick={() => alert("Bulan sebelumnya!")}>‹</span>
+              <span className="month-year-title">March 2026</span>
+              <span className="nav-arrow" onClick={() => alert("Bulan berikutnya!")}>›</span>
+            </div>
+            <div className="calendar-days-grid">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              <span>1</span><span>2</span><span>3</span><span className="active-day">4</span><span>5</span><span>6</span><span>7</span>
+            </div>
+            <div className="calendar-tabs-row">
+              <span className="tab-pill active">All</span>
+              <span className="tab-pill">UX Fundamental</span>
+              <span className="tab-pill">Webinar</span>
+            </div>
+          </div>
+
+          <div className="today-plans-section">
+            <div className="right-plans-header" style={{ marginTop: "16px", marginBottom: "8px" }}>
+              <h3 className="right-plans-title">Today Plans</h3>
+            </div>
+            <div className="plan-list">
+              {TODAY_PLANS.map((plan, i) => (
+                <div className="plan-item" key={i} onClick={() => alert(`Rencana: ${plan.name}`)}>
+                  <div className={`plan-dot ${plan.dot}`} />
+                  <div className="plan-info">
+                    <p className="plan-name">{plan.name}</p>
+                    <p className="plan-time">{plan.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {selectedNotif && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.35)', padding: '20px' }} onClick={() => setSelectedNotif(null)}>
+          <div style={{ background: 'white', borderRadius: '18px', maxWidth: '480px', width: '100%', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,114,114,0.15)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '18px 20px', borderBottom: '1px solid #e4eded', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontWeight: 700, fontSize: '15px', color: '#0d2626' }}>Detail Notifikasi</h3>
+              <button onClick={() => setSelectedNotif(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7aa3a3', fontSize: '18px', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ padding: '22px 20px' }}>
+              <h4 style={{ margin: '0 0 6px 0', fontSize: '17px', fontWeight: 700, color: '#0d2626' }}>{selectedNotif.title}</h4>
+              <p style={{ margin: '0 0 20px 0', fontSize: '11px', color: '#7aa3a3' }}>{new Date(selectedNotif.createdAt).toLocaleString('id-ID')}</p>
+              <div style={{ fontSize: '13.5px', lineHeight: 1.7, color: '#3d6363', background: '#f7fafa', padding: '16px', borderRadius: '12px', border: '1px solid #e4eded' }}>
                 {(() => {
                   const { sender, body } = parseSender(selectedNotif.message);
                   return (
                     <>
                       {sender && (
-                        <div style={{ marginBottom: '12px' }}>
-                          <span style={{
-                            display: 'inline-block', fontSize: '12px', fontWeight: 600, padding: '4px 10px', borderRadius: '12px',
-                            background: sender.startsWith('Admin') ? '#EDE9FE' : '#DBEAFE',
-                            color: sender.startsWith('Admin') ? '#7C3AED' : '#2563EB',
-                          }}>
+                        <div style={{ marginBottom: '10px' }}>
+                          <span style={{ display: 'inline-block', fontSize: '11px', fontWeight: 600, padding: '3px 10px', borderRadius: '99px', background: sender.startsWith('Admin') ? '#EDE9FE' : '#e6f4f4', color: sender.startsWith('Admin') ? '#7C3AED' : '#007272' }}>
                             {sender}
                           </span>
                         </div>
@@ -709,8 +611,8 @@ export default function DashboardAdminPage() {
                 })()}
               </div>
             </div>
-            <div style={{ padding: '16px 24px', borderTop: '1px solid #eee', display: 'flex', justifyContent: 'flex-end' }}>
-              <button onClick={() => setSelectedNotif(null)} style={{ padding: '8px 24px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
+            <div style={{ padding: '14px 20px', borderTop: '1px solid #e4eded', display: 'flex', justifyContent: 'flex-end' }}>
+              <button onClick={() => setSelectedNotif(null)} style={{ padding: '9px 24px', background: '#007272', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>
                 Tutup
               </button>
             </div>
