@@ -30,6 +30,9 @@ export default async function LecturerCreateAssignmentPage({
     const submissionRequirement = formData.get('submissionRequirement') as string;
     const templateName = formData.get('templateName') as string;
     const templateUrl = formData.get('templateUrl') as string;
+    const gradingMethod = formData.get('gradingMethod') as string;
+    const maxAttemptsRaw = parseInt(formData.get('maxAttempts') as string, 10);
+    const maxAttempts = isNaN(maxAttemptsRaw) ? 1 : maxAttemptsRaw;
 
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
@@ -49,6 +52,8 @@ export default async function LecturerCreateAssignmentPage({
           submissionRequirement,
           templateName: templateName || undefined,
           templateUrl: templateUrl || undefined,
+          maxAttempts,
+          gradingMethod: gradingMethod || undefined,
         },
         token
       );

@@ -187,7 +187,7 @@ export class AssignmentService {
       orderBy: { attemptNumber: 'desc' },
     });
 
-    if (existingSubmissions.length >= assignment.maxAttempts) {
+    if (assignment.maxAttempts > 0 && existingSubmissions.length >= assignment.maxAttempts) {
       throw new BadRequestException(
         `You have reached the maximum number of attempts (${assignment.maxAttempts})`,
       );

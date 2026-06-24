@@ -56,7 +56,12 @@ export class CourseController {
       targetSemester?: number;
       targetAngkatan?: number;
     },
+    @Request() req: { user: { id: string; role: string } },
   ): Promise<Course> {
+    // If the user is a LECTURER, they can only create courses for themselves
+    if (req.user.role === 'LECTURER' && (!data.instructorId || data.instructorId !== req.user.id)) {
+      data.instructorId = req.user.id;
+    }
     return this.courseService.create(data);
   }
 

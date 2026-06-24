@@ -54,7 +54,7 @@ export class LabSubmissionService {
       orderBy: { attemptNumber: 'desc' },
     });
 
-    if (existingSubmissions.length >= lab.maxAttempts) {
+    if (lab.maxAttempts > 0 && existingSubmissions.length >= lab.maxAttempts) {
       throw new BadRequestException(
         `Anda sudah mencapai batas maksimal pengumpulan (${lab.maxAttempts} kali).`,
       );

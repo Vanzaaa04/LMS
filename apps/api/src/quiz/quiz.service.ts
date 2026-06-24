@@ -196,7 +196,7 @@ export class QuizService {
       orderBy: { attemptNumber: 'desc' },
     });
 
-    if (existingSubmissions.length >= quiz.maxAttempts) {
+    if (quiz.maxAttempts > 0 && existingSubmissions.length >= quiz.maxAttempts) {
       throw new ForbiddenException(
         `You have reached the maximum number of attempts (${quiz.maxAttempts})`,
       );
