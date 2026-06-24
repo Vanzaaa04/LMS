@@ -15,6 +15,8 @@ export interface Quiz {
   durationMinutes: number;
   xpReward: number;
   minimumScore: number; // 0-100
+  maxAttempts?: number;
+  gradingMethod?: string;
   createdAt: string;
   updatedAt: string;
 }

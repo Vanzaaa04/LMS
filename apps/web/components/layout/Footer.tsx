@@ -23,7 +23,7 @@ export const Footer: React.FC = () => {
             className="truncate text-sm font-bold"
             style={{ color: 'var(--color-text-primary)' }}
           >
-            RuangDosen
+            AFADIA Academy
           </p>
           <p
             className="break-words text-xs leading-5"

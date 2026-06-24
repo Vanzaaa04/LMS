@@ -244,7 +244,7 @@ export default function DashboardMahasiswaPage() {
         </head>
         <body>
           <div class="header">
-            <div class="logo">Ruang<span>Dosen</span></div>
+            <div class="logo">AFADIA<span>Academy</span></div>
             <div style="text-align: right; font-size: 12px; color: #64748b;">
               Sistem Manajemen Akademik & Praktikum
             </div>
@@ -379,44 +379,6 @@ export default function DashboardMahasiswaPage() {
       </section>
 
       <section className="stat-overview">
-        <div className="stat-card progress-card">
-          <div className="stat-card-accent accent-blue" />
-          <p className="stat-label">OVERALL PROGRESS</p>
-          <div className="progress-ring-wrap">
-            <div className="progress-ring-info">
-              <p className="stat-value">
-                {dashboardStats.overallProgress}<span className="stat-unit">%</span>
-              </p>
-              <p className="stat-change neutral">Semester ini</p>
-            </div>
-            <div className="ring-container">
-              <svg width="72" height="72" viewBox="0 0 72 72">
-                <defs>
-                  <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#3B82F6" />
-                    <stop offset="100%" stopColor="#7C3AED" />
-                  </linearGradient>
-                </defs>
-                <circle className="ring-bg" cx="36" cy="36" r={RING_RADIUS} />
-                <circle
-                  className="ring-fill"
-                  cx="36"
-                  cy="36"
-                  r={RING_RADIUS}
-                  strokeDasharray={RING_CIRCUMFERENCE}
-                  strokeDashoffset={ringOffset}
-                  stroke="url(#ringGradient)"
-                  fill="none"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  style={{ transform: "rotate(-90deg)", transformOrigin: "center" }}
-                />
-              </svg>
-              <div className="ring-label">{dashboardStats.overallProgress}%</div>
-            </div>
-          </div>
-        </div>
-
         <SummaryCard
           accentClass="accent-green"
           iconClass="green"
@@ -645,15 +607,6 @@ function CourseCard({ course, onOpen }: { course: DisplayCourse; onOpen: () => v
         <UserIcon />
         {course.instructor}
       </p>
-      <div className="progress-section">
-        <div className="progress-label">
-          <span className="progress-text">Course Progress</span>
-          <span className="progress-pct">{course.progress}%</span>
-        </div>
-        <div className="progress-track">
-          <div className={`progress-fill ${course.progressColor}`} style={{ width: `${course.progress}%` }} />
-        </div>
-      </div>
       <button className={`course-action-btn ${course.actionType}`} type="button" onClick={onOpen}>
         {course.action}
       </button>

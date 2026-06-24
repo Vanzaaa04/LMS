@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ruang Dosen",
+  title: "AFADIA Academy",
   description: "Platform pembelajaran online untuk dosen dan mahasiswa",
 };
 

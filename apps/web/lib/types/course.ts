@@ -50,6 +50,7 @@ export interface Course {
   totalQuizzes: number;
   isNew?: boolean;
   durationWeeks?: number;
+  className?: string;
 }
 
 export interface CourseDetail extends Course {

@@ -24,7 +24,7 @@ export default function QuizHeader({ children }: { children: ReactNode }) {
               className="text-xl font-bold hidden sm:inline"
               style={{ color: 'var(--color-brand-primary)' }}
             >
-              Ruang Dosen
+              AFADIA Academy
             </span>
           </div>
           <div className="flex items-center gap-4">
@@ -50,16 +50,16 @@ export default function QuizHeader({ children }: { children: ReactNode }) {
       <footer className="border-t bg-white py-5 px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
-            <p className="font-bold text-blue-700 text-sm">Ruang Dosen</p>
+            <p className="font-bold text-blue-700 text-sm">AFADIA Academy</p>
             <p className="text-xs text-slate-400 mt-0.5">
-              © 2024 Ruang Dosen Academic Platform. All rights reserved.
+              © 2024 AFADIA Academy Academic Platform. All rights reserved.
             </p>
           </div>
           <div className="flex gap-5 text-xs text-slate-500">
             <button onClick={() => alert("Privacy Policy:\n\nSemua data Anda terlindungi dengan enkripsi SSL. Kami tidak membagikan data pribadi atau riwayat nilai Anda kepada pihak ketiga mana pun tanpa persetujuan Anda.")} className="hover:text-slate-700" style={{ background: 'none', border: 'none', font: 'inherit', cursor: 'pointer', padding: 0 }}>Privacy Policy</button>
-            <button onClick={() => alert("Terms of Service:\n\nDengan menggunakan Ruang Dosen, Anda setuju untuk menjaga kerahasiaan kredensial login Anda, tidak melakukan kecurangan akademik, dan mematuhi tata tertib kampus.")} className="hover:text-slate-700" style={{ background: 'none', border: 'none', font: 'inherit', cursor: 'pointer', padding: 0 }}>Terms of Service</button>
-            <button onClick={() => alert("Help Center:\n\nJika menemui kendala teknis atau kesalahan data, silakan buat laporan ke support@ruangdosen.ac.id atau hubungi helpdesk IT kampus.")} className="hover:text-slate-700" style={{ background: 'none', border: 'none', font: 'inherit', cursor: 'pointer', padding: 0 }}>Help Center</button>
-            <button onClick={() => alert("Contact Support:\n\nEmail: support@ruangdosen.ac.id\nJam Operasional: Senin - Jumat, 08.00 - 17.00 WIB")} className="hover:text-slate-700" style={{ background: 'none', border: 'none', font: 'inherit', cursor: 'pointer', padding: 0 }}>Contact Support</button>
+            <button onClick={() => alert("Terms of Service:\n\nDengan menggunakan AFADIA Academy, Anda setuju untuk menjaga kerahasiaan kredensial login Anda, tidak melakukan kecurangan akademik, dan mematuhi tata tertib kampus.")} className="hover:text-slate-700" style={{ background: 'none', border: 'none', font: 'inherit', cursor: 'pointer', padding: 0 }}>Terms of Service</button>
+            <button onClick={() => alert("Help Center:\n\nJika menemui kendala teknis atau kesalahan data, silakan buat laporan ke support@afadia.ac.id atau hubungi helpdesk IT kampus.")} className="hover:text-slate-700" style={{ background: 'none', border: 'none', font: 'inherit', cursor: 'pointer', padding: 0 }}>Help Center</button>
+            <button onClick={() => alert("Contact Support:\n\nEmail: support@afadia.ac.id\nJam Operasional: Senin - Jumat, 08.00 - 17.00 WIB")} className="hover:text-slate-700" style={{ background: 'none', border: 'none', font: 'inherit', cursor: 'pointer', padding: 0 }}>Contact Support</button>
           </div>
         </div>
       </footer>

@@ -52,7 +52,7 @@ export function fetchLabDetailApi(labId: string, accessToken: string) {
 }
 
 export function createLabApi(
-  data: { title: string; instructions: string; moduleId: string; fileUrl?: string; fileName?: string },
+  data: { title: string; instructions: string; moduleId: string; fileUrl?: string; fileName?: string; maxAttempts?: number; gradingMethod?: string },
   accessToken: string
 ) {
   return apiRequest<ApiLab>('/labs', {
@@ -107,5 +107,28 @@ export function fetchMyLabSubmissionApi(labId: string, accessToken: string) {
       Authorization: `Bearer ${accessToken}`,
     },
     next: { revalidate: 0 },
+  });
+}
+
+export function updateLabApi(
+  labId: string,
+  data: { title?: string; instructions?: string; fileUrl?: string; fileName?: string; maxAttempts?: number; gradingMethod?: string },
+  accessToken: string
+) {
+  return apiRequest<ApiLab>(`/labs/${labId}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteLabApi(labId: string, accessToken: string) {
+  return apiRequest<{ success: boolean }>(`/labs/${labId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
   });
 }

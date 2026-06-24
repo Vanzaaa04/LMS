@@ -231,7 +231,7 @@ export function LecturerMaterialEditorView({
                 color: 'var(--color-brand-primary)',
               }}
             >
-              Cancel
+              Kembali ke Kelas
             </Link>
             <button
               type="submit"

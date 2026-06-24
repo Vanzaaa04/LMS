@@ -17,6 +17,7 @@ interface StudentProfile {
   xp: number;
   maxCredits: number;
   angkatan: number | null;
+  semester: number | null;
   usedCredits: number;
   remainingCredits: number;
   createdAt: string;
@@ -36,6 +37,7 @@ export default function MahasiswaProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editPassword, setEditPassword] = useState("");
+  const [editSemester, setEditSemester] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState("");
@@ -71,6 +73,7 @@ export default function MahasiswaProfilePage() {
 
       setProfile(data);
       setEditName(data.name);
+      setEditSemester(data.semester?.toString() || "");
     } catch (err: unknown) {
       setFetchError(err instanceof Error ? err.message : "Terjadi kesalahan.");
     } finally {
@@ -93,7 +96,7 @@ export default function MahasiswaProfilePage() {
     if (!token) { router.push("/login"); return; }
 
     try {
-      const body: Record<string, string> = {};
+      const body: Record<string, any> = {};
       if (editName.trim() && editName.trim() !== profile?.name) {
         body.name = editName.trim();
       }
@@ -104,6 +107,10 @@ export default function MahasiswaProfilePage() {
           return;
         }
         body.password = editPassword;
+      }
+      const parsedSemester = parseInt(editSemester, 10);
+      if (!isNaN(parsedSemester) && parsedSemester !== profile?.semester) {
+        body.semester = parsedSemester;
       }
 
       if (Object.keys(body).length === 0) {
@@ -223,7 +230,13 @@ export default function MahasiswaProfilePage() {
         <div className="profile-hero-inner">
           {/* Avatar */}
           <div className="profile-avatar-wrap">
-            <div className="profile-avatar">{getInitials(profile.name)}</div>
+            <div className="profile-avatar overflow-hidden">
+              <img 
+                src="/custom_avatar.png" 
+                alt="Avatar Mahasiswa" 
+                className="w-full h-full object-cover"
+              />
+            </div>
             <div className="profile-avatar-badge">
               <CheckSmIcon />
             </div>
@@ -402,6 +415,14 @@ export default function MahasiswaProfilePage() {
                     </span>
                   </div>
                   <div className="profile-field">
+                    <span className="profile-field-label">Semester</span>
+                    <span className="profile-field-value">
+                      {profile.semester
+                        ? `Semester ${profile.semester}`
+                        : <span className="muted">Belum diatur</span>}
+                    </span>
+                  </div>
+                  <div className="profile-field">
                     <span className="profile-field-label">Bergabung Sejak</span>
                     <span className="profile-field-value">{formatDate(profile.createdAt)}</span>
                   </div>
@@ -464,6 +485,26 @@ export default function MahasiswaProfilePage() {
                       <span className="profile-input-hint">Angkatan tidak dapat diubah</span>
                     </div>
                     <div className="profile-input-group">
+                      <label className="profile-input-label" htmlFor="edit-semester">
+                        Semester Saat Ini
+                      </label>
+                      <input
+                        id="edit-semester"
+                        className="profile-input"
+                        type="number"
+                        min="1"
+                        max="14"
+                        value={editSemester}
+                        onChange={(e) => setEditSemester(e.target.value)}
+                        disabled={saving}
+                        placeholder="Contoh: 1"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="profile-form-row">
+                    <div className="profile-input-group">
                       <label className="profile-input-label" htmlFor="edit-password">
                         Password Baru{" "}
                         <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>
@@ -509,6 +550,7 @@ export default function MahasiswaProfilePage() {
                         setIsEditing(false);
                         setSaveError("");
                         setEditName(profile.name);
+                        setEditSemester(profile.semester?.toString() || "");
                         setEditPassword("");
                       }}
                       disabled={saving}
@@ -674,20 +716,6 @@ export default function MahasiswaProfilePage() {
                   <span className="profile-academic-val">{profile.xp ?? 0}</span>
                 </div>
               </div>
-
-              {/* SKS Progress bar */}
-              <div className="profile-sks-bar-wrap">
-                <div className="profile-sks-bar-header">
-                  <span className="profile-sks-bar-label">Penggunaan SKS</span>
-                  <span className="profile-sks-bar-pct">{sksPercent}%</span>
-                </div>
-                <div className="profile-sks-track">
-                  <div
-                    className="profile-sks-fill"
-                    style={{ width: `${Math.min(sksPercent, 100)}%` }}
-                  />
-                </div>
-              </div>
             </div>
           </div>
 
@@ -696,7 +724,7 @@ export default function MahasiswaProfilePage() {
             <p className="profile-since-label">Bergabung Sejak</p>
             <p className="profile-since-value">{formatDate(profile.createdAt)}</p>
             <p className="profile-since-sub">
-              Sudah {getMemberDuration(profile.createdAt)} bersama Ruang Dosen
+              Sudah {getMemberDuration(profile.createdAt)} bersama AFADIA Academy
             </p>
           </div>
 

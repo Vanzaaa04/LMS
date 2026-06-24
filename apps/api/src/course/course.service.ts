@@ -12,10 +12,12 @@ import { Course } from '@prisma/client';
 export class CourseService {
   constructor(private prisma: PrismaService) {}
 
+  // ─── Admin Creates Course (with optional className) ──────────────
   async create(data: {
     title: string;
     description?: string;
-    instructorId: string;
+    instructorId?: string;
+    className?: string;
     credits?: number;
     department?: string;
     semester?: string;
@@ -25,32 +27,33 @@ export class CourseService {
     targetSemester?: number;
     targetAngkatan?: number;
   }): Promise<Course> {
-    // 1. check if instructor exists
-    const instructor = await this.prisma.user.findUnique({
-      where: { id: data.instructorId },
-    });
+    // If instructorId is provided, verify the user exists and is a LECTURER or ADMIN
+    if (data.instructorId) {
+      const instructor = await this.prisma.user.findUnique({
+        where: { id: data.instructorId },
+      });
 
-    if (!instructor) {
-      throw new NotFoundException('Instructor not found');
+      if (!instructor) {
+        throw new NotFoundException('Instructor not found');
+      }
+
+      if (instructor.role !== 'LECTURER' && instructor.role !== 'ADMIN') {
+        throw new ForbiddenException('Only lecturers can be assigned to courses');
+      }
     }
 
-    // verify role
-    if (instructor.role !== 'LECTURER' && instructor.role !== 'ADMIN') {
-      throw new ForbiddenException('Only lecturers can create courses');
-    }
-
-    // 2. create course
     const course = await this.prisma.course.create({
       data: {
         title: data.title,
         description: data.description,
+        className: data.className || null,
         credits: this.normalizeCourseCredits(data.credits),
         department: this.normalizeCourseText(data.department, 'Computer Science'),
         semester: this.normalizeCourseText(data.semester, 'Fall Semester 2026'),
         teachingFormat: data.teachingFormat || 'Teori dan Praktikum',
         enrollmentCap: this.normalizeEnrollmentCap(data.enrollmentCap),
         status: this.normalizeCourseStatus(data.status),
-        instructorId: data.instructorId,
+        instructorId: data.instructorId || null,
         targetSemester: data.targetSemester ?? 1,
         targetAngkatan: data.targetAngkatan ?? null,
       },
@@ -59,13 +62,62 @@ export class CourseService {
     return course;
   }
 
+  // ─── Dosen Claims a Class ────────────────────────────────────────
+  async claimClass(courseId: string, lecturerId: string) {
+    const course = await this.prisma.course.findUnique({ where: { id: courseId } });
+    if (!course) throw new NotFoundException('Course not found');
+
+    if (course.instructorId) {
+      throw new ConflictException('Kelas ini sudah diambil oleh dosen lain');
+    }
+
+    // Verify the user is a LECTURER
+    const lecturer = await this.prisma.user.findUnique({ where: { id: lecturerId } });
+    if (!lecturer || lecturer.role !== 'LECTURER') {
+      throw new ForbiddenException('Only lecturers can claim classes');
+    }
+
+    return this.prisma.course.update({
+      where: { id: courseId },
+      data: { instructorId: lecturerId },
+      include: {
+        instructor: { select: { id: true, name: true, email: true } },
+      },
+    });
+  }
+
+  // ─── Dosen Releases a Class ──────────────────────────────────────
+  async releaseClass(courseId: string, lecturerId: string, userRole: string) {
+    const course = await this.prisma.course.findUnique({ where: { id: courseId } });
+    if (!course) throw new NotFoundException('Course not found');
+
+    if (course.instructorId !== lecturerId && userRole !== 'ADMIN') {
+      throw new ForbiddenException('Only the assigned instructor or admin can release this class');
+    }
+
+    return this.prisma.course.update({
+      where: { id: courseId },
+      data: { instructorId: null },
+    });
+  }
+
+  // ─── Get Available (Unclaimed) Classes ───────────────────────────
+  async getAvailableClasses() {
+    return this.prisma.course.findMany({
+      where: { instructorId: null, status: 'Active' },
+      orderBy: [{ targetSemester: 'asc' }, { title: 'asc' }],
+      include: {
+        _count: { select: { enrollments: true, modules: true } },
+      },
+    });
+  }
+
+  // ─── Student Enrollment ──────────────────────────────────────────
   async enroll(courseId: string, userId: string, userRole: string) {
-    // 0. Only students can enroll
     if (userRole !== 'STUDENT') {
       throw new ForbiddenException('Only students can enroll in courses');
     }
 
-    // 1. Check if course exists
     const course = await this.prisma.course.findUnique({
       where: { id: courseId },
     });
@@ -74,13 +126,17 @@ export class CourseService {
       throw new NotFoundException('Course not found');
     }
 
-    // 2. Check if already enrolled
+    // Check enrollment cap
+    const enrollmentCount = await this.prisma.enrollment.count({
+      where: { courseId },
+    });
+    if (enrollmentCount >= course.enrollmentCap) {
+      throw new BadRequestException('Kelas ini sudah penuh');
+    }
+
     const existingEnrollment = await this.prisma.enrollment.findUnique({
       where: {
-        userId_courseId: {
-          userId,
-          courseId,
-        },
+        userId_courseId: { userId, courseId },
       },
     });
 
@@ -90,12 +146,8 @@ export class CourseService {
 
     await this.ensureStudentHasAvailableCredits(userId, course.credits);
 
-    // 3. Create enrollment
     return this.prisma.enrollment.create({
-      data: {
-        userId,
-        courseId,
-      },
+      data: { userId, courseId },
     });
   }
 
@@ -154,8 +206,9 @@ export class CourseService {
     });
   }
 
+  // ─── Get My Courses ──────────────────────────────────────────────
   async getMyCourses(userId: string, userRole: string) {
-    // Dosen: kembalikan kursus yang mereka ajar
+    // Dosen: return courses they teach
     if (userRole === 'LECTURER' || userRole === 'ADMIN') {
       return this.prisma.course.findMany({
         where: { instructorId: userId },
@@ -166,7 +219,7 @@ export class CourseService {
       });
     }
 
-    // Mahasiswa: kembalikan kursus yang mereka ikuti
+    // Mahasiswa: return courses they are enrolled in
     const enrollments = await this.prisma.enrollment.findMany({
       where: { userId },
       include: {
@@ -183,37 +236,9 @@ export class CourseService {
     return enrollments.map((e) => e.course);
   }
 
+  // ─── Find All Courses ────────────────────────────────────────────
   async findAll(userId?: string, userRole?: string) {
-    if (userRole === 'STUDENT' && userId) {
-      const student = await this.prisma.user.findUnique({
-        where: { id: userId },
-      });
-      if (student) {
-        return this.prisma.course.findMany({
-          where: {
-            targetSemester: student.semester || 1,
-            OR: [
-              { targetAngkatan: null },
-              { targetAngkatan: student.angkatan || undefined },
-            ],
-          },
-          include: {
-            instructor: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                xp: true,
-              },
-            },
-            _count: {
-              select: { enrollments: true, modules: true },
-            },
-          },
-        });
-      }
-    }
+    // No filters applied for any role. Everyone sees all courses.
 
     return this.prisma.course.findMany({
       include: {
@@ -230,6 +255,18 @@ export class CourseService {
           select: { enrollments: true, modules: true },
         },
       },
+    });
+  }
+
+  // ─── Get Classes for a Subject (grouped by title + semester) ─────
+  async getClassesForSubject(title: string, targetSemester: number) {
+    return this.prisma.course.findMany({
+      where: { title, targetSemester },
+      include: {
+        instructor: { select: { id: true, name: true, email: true } },
+        _count: { select: { enrollments: true } },
+      },
+      orderBy: { className: 'asc' },
     });
   }
 
@@ -278,12 +315,15 @@ export class CourseService {
     data: {
       title?: string;
       description?: string;
+      className?: string;
       credits?: number;
       department?: string;
       semester?: string;
       teachingFormat?: string;
       enrollmentCap?: number;
       status?: string;
+      targetSemester?: number;
+      targetAngkatan?: number;
     },
     userId: string,
     userRole?: string,
@@ -296,6 +336,7 @@ export class CourseService {
       throw new NotFoundException(`Course with ID ${id} not found`);
     }
 
+    // Admin can always update; Dosen can only update their own courses
     if (course.instructorId !== userId && userRole !== 'ADMIN') {
       throw new ForbiddenException('You are not the instructor of this course');
     }
@@ -307,6 +348,7 @@ export class CourseService {
         ...(data.description !== undefined && {
           description: data.description,
         }),
+        ...(data.className !== undefined && { className: data.className }),
         ...(data.credits !== undefined && {
           credits: this.normalizeCourseCredits(data.credits),
         }),
@@ -325,6 +367,8 @@ export class CourseService {
         ...(data.status !== undefined && {
           status: this.normalizeCourseStatus(data.status),
         }),
+        ...(data.targetSemester !== undefined && { targetSemester: data.targetSemester }),
+        ...(data.targetAngkatan !== undefined && { targetAngkatan: data.targetAngkatan }),
       },
     });
   }

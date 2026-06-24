@@ -28,6 +28,7 @@ export class CourseController {
         title: { type: 'string' },
         description: { type: 'string' },
         instructorId: { type: 'string' },
+        className: { type: 'string', example: 'A' },
         credits: { type: 'number', example: 3 },
         department: { type: 'string', example: 'Computer Science' },
         semester: { type: 'string', example: 'Fall Semester 2026' },
@@ -44,7 +45,8 @@ export class CourseController {
     data: {
       title: string;
       description?: string;
-      instructorId: string;
+      instructorId?: string;
+      className?: string;
       credits?: number;
       department?: string;
       semester?: string;
@@ -56,6 +58,30 @@ export class CourseController {
     },
   ): Promise<Course> {
     return this.courseService.create(data);
+  }
+
+  // ─── Dosen Claims a Class ────────────────────────────────────────
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/claim')
+  async claimClass(@Param('id') id: string, @Request() req: { user: { id: string } }) {
+    return this.courseService.claimClass(id, req.user.id);
+  }
+
+  // ─── Dosen Releases a Class ──────────────────────────────────────
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/release')
+  async releaseClass(
+    @Param('id') id: string,
+    @Request() req: { user: { id: string; role: string } },
+  ) {
+    return this.courseService.releaseClass(id, req.user.id, req.user.role);
+  }
+
+  // ─── Get Available (Unclaimed) Classes ───────────────────────────
+  @UseGuards(JwtAuthGuard)
+  @Get('available')
+  async getAvailableClasses() {
+    return this.courseService.getAvailableClasses();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -122,12 +148,15 @@ export class CourseController {
       properties: {
         title: { type: 'string' },
         description: { type: 'string' },
+        className: { type: 'string' },
         credits: { type: 'number', example: 3 },
         department: { type: 'string', example: 'Computer Science' },
         semester: { type: 'string', example: 'Fall Semester 2026' },
         teachingFormat: { type: 'string', example: 'Teori dan Praktikum' },
         enrollmentCap: { type: 'number', example: 60 },
         status: { type: 'string', example: 'Active' },
+        targetSemester: { type: 'number', example: 1 },
+        targetAngkatan: { type: 'number', example: 2024 },
       },
     },
   })
@@ -137,12 +166,15 @@ export class CourseController {
     updateCourseDto: {
       title?: string;
       description?: string;
+      className?: string;
       credits?: number;
       department?: string;
       semester?: string;
       teachingFormat?: string;
       enrollmentCap?: number;
       status?: string;
+      targetSemester?: number;
+      targetAngkatan?: number;
     },
     @Request() req: { user: { id: string; role: string } },
   ) {

@@ -28,18 +28,18 @@ export function LecturerCoursesView({
       <section className="courses-header">
         <div className="courses-header-left">
           <p>Lecturer Workspace</p>
-          <h1>Teaching Courses</h1>
+          <h1>Mata Kuliah Saya</h1>
           <p className="subtitle">
-            Manage your active classes, review schedules, and prepare learning activities from one course list.
+            Kelola kelas yang Anda ampu, buat materi, tugas, dan lab dari sini.
           </p>
         </div>
 
         <Link
-          href="/dosen/courses/create"
+          href="/dosen/courses/available"
           className="btn-create-course"
         >
           <span>+</span>
-          Create New Course
+          Ambil Kelas Baru
         </Link>
       </section>
 

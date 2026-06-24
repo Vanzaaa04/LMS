@@ -20,7 +20,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           hideTextOnMobile ? 'hidden sm:inline' : ''
         }`}
       >
-        Ruang<span className="text-[#2563EB]">Dosen</span>
+        AFADIA<span className="text-[#2563EB]">Academy</span>
       </span>
     </>
   );

@@ -54,6 +54,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, onEnrol
             style={{ color: 'var(--color-text-primary)', fontFamily: "'Liberation Sans', Arial, sans-serif" }}
           >
             {course.title}
+            {course.className && (
+              <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-brand-primary)', marginLeft: '8px' }}>
+                (Kelas {course.className})
+              </span>
+            )}
           </h3>
 
           <div className="mb-3 flex items-center gap-1">

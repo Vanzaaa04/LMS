@@ -83,18 +83,18 @@ export class AuthController {
     return this.authService.getProfile(req.user.id);
   }
 
-  // PUT /auth/profile — Update profil user
   @UseGuards(JwtAuthGuard)
   @Put('profile')
   async updateProfile(
     @Request() req: { user: { id: string; role: string } },
     @Body()
-    body: { name?: string; password?: string; email?: string; role?: string },
+    body: { name?: string; password?: string; email?: string; role?: string; semester?: number },
   ) {
     // Validasi ketat: email dan role diabaikan jika dikirim
     return this.authService.updateProfile(req.user.id, {
       name: body.name,
       password: body.password,
+      semester: body.semester,
     });
   }
 }

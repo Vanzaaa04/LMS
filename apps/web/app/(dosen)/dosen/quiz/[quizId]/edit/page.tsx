@@ -362,6 +362,13 @@ export default function QuizEditorPage() {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
+              onClick={() => router.push(courseHref)}
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Kembali ke Kelas
+            </button>
+            <button
+              type="button"
               onClick={removeCurrentQuiz}
               disabled={isDeletingQuiz}
               className="inline-flex items-center gap-2 rounded-2xl border border-red-200 px-5 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
@@ -422,6 +429,8 @@ export default function QuizEditorPage() {
               <div className="space-y-3">
                 <ReadonlyField icon={<Clock className="h-4 w-4 text-slate-400" />} label="Durasi (Menit)" value={String(quiz.durationMinutes)} />
                 <ReadonlyField icon={<Star className="h-4 w-4 text-slate-400" />} label="Ambang Kelulusan (%)" value={String(quiz.minimumScore)} />
+                <ReadonlyField icon={<Star className="h-4 w-4 text-slate-400" />} label="Max Attempts" value={String(quiz.maxAttempts ?? 1)} />
+                <ReadonlyField icon={<Star className="h-4 w-4 text-slate-400" />} label="Grading Method" value={quiz.gradingMethod ?? "LATEST"} />
               </div>
             </div>
 

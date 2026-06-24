@@ -47,21 +47,22 @@ model User {
 }
 
 model Course {
-  id           String   @id @default(uuid())
-  title        String
-  description  String?
-  credits      Int      @default(3)
-  department   String   @default("Computer Science")
-  semester     String   @default("Fall Semester 2026")
-  teachingFormat String @default("Teori dan Praktikum")
-  targetSemester Int    @default(1)
+  id             String   @id @default(uuid())
+  title          String
+  description    String?
+  className      String?  // e.g. "A", "B", "Reguler"
+  credits        Int      @default(3)
+  department     String   @default("Computer Science")
+  semester       String   @default("Fall Semester 2026")
+  teachingFormat String   @default("Teori dan Praktikum")
+  targetSemester Int      @default(1)
   targetAngkatan Int?
-  enrollmentCap Int     @default(60)
-  status       String   @default("Active")
-  instructorId String
-  instructor   User     @relation("InstructorCourses", fields: [instructorId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  enrollmentCap  Int      @default(60)
+  status         String   @default("Active")
+  instructorId   String?
+  instructor     User?    @relation("InstructorCourses", fields: [instructorId], references: [id], onDelete: SetNull)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   modules     CourseModule[]
   enrollments Enrollment[]
@@ -96,18 +97,20 @@ model Material {
 }
 
 model Quiz {
-  id           String           @id @default(uuid())
-  title        String
-  status       String           @default("DRAFT")
-  passingScore Int              @default(70)
-  xpReward     Int              @default(100)
-  timeLimit    Int              @default(30)
-  moduleId     String
-  module       CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  questions    QuizQuestion[]
-  submissions  QuizSubmission[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id            String           @id @default(uuid())
+  title         String
+  status        String           @default("DRAFT")
+  passingScore  Int              @default(70)
+  xpReward      Int              @default(100)
+  timeLimit     Int              @default(30)
+  maxAttempts   Int              @default(1)
+  gradingMethod String           @default("LATEST") // "LATEST" or "HIGHEST"
+  moduleId      String
+  module        CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions     QuizQuestion[]
+  submissions   QuizSubmission[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 }
 
 model QuizQuestion {
@@ -128,6 +131,8 @@ model Assignment {
   templateUrl           String?
   templateName          String?
   submissionRequirement String?
+  maxAttempts           Int                    @default(1)
+  gradingMethod         String                 @default("LATEST") // "LATEST" or "HIGHEST"
   moduleId              String
   module                CourseModule           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   submissions           AssignmentSubmission[]
@@ -146,40 +151,40 @@ model AssignmentSubmission {
   status       String     @default("PENDING") // "PENDING" or "GRADED"
   score        Int?
   feedback     String?
+  attemptNumber Int       @default(1)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-
-  @@unique([assignmentId, studentId])
 }
 
 model PracticalLab {
-  id           String          @id @default(uuid())
-  title        String
-  instructions String
-  fileUrl      String?
-  fileName     String?
-  moduleId     String
-  module       CourseModule    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  submissions  LabSubmission[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id            String          @id @default(uuid())
+  title         String
+  instructions  String
+  fileUrl       String?
+  fileName      String?
+  maxAttempts   Int             @default(1)
+  gradingMethod String          @default("LATEST") // "LATEST" or "HIGHEST"
+  moduleId      String
+  module        CourseModule    @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  submissions   LabSubmission[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model LabSubmission {
-  id        String       @id @default(uuid())
-  labId     String
-  lab       PracticalLab @relation(fields: [labId], references: [id], onDelete: Cascade)
-  studentId String
-  student   User         @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  fileUrl   String?
-  note      String?
-  status    String       @default("PENDING") // "PENDING" or "GRADED"
-  score     Int?
-  feedback  String?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-
-  @@unique([labId, studentId])
+  id            String       @id @default(uuid())
+  labId         String
+  lab           PracticalLab @relation(fields: [labId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       User         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  fileUrl       String?
+  note          String?
+  status        String       @default("PENDING") // "PENDING" or "GRADED"
+  score         Int?
+  feedback      String?
+  attemptNumber Int          @default(1)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Enrollment {
@@ -194,17 +199,16 @@ model Enrollment {
 }
 
 model QuizSubmission {
-  id        String   @id @default(uuid())
-  quizId    String
-  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  studentId String
-  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  score     Int
-  passed    Boolean
-  details   Json
-  createdAt DateTime @default(now())
-
-  @@unique([quizId, studentId])
+  id            String   @id @default(uuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  score         Int
+  passed        Boolean
+  details       Json
+  attemptNumber Int      @default(1)
+  createdAt     DateTime @default(now())
 }
 model Notification {
   id        String   @id @default(uuid())

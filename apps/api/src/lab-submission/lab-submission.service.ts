@@ -45,21 +45,22 @@ export class LabSubmissionService {
       );
     }
 
-    // Validasi 3: Cek apakah mahasiswa sudah pernah submit sebelumnya
-    const existingSubmission = await this.prisma.labSubmission.findUnique({
+    // Validasi 3: Cek apakah mahasiswa sudah mencapai batas maxAttempts
+    const existingSubmissions = await this.prisma.labSubmission.findMany({
       where: {
-        labId_studentId: {
-          labId: labId,
-          studentId: userId,
-        },
+        labId: labId,
+        studentId: userId,
       },
+      orderBy: { attemptNumber: 'desc' },
     });
 
-    if (existingSubmission) {
+    if (existingSubmissions.length >= lab.maxAttempts) {
       throw new BadRequestException(
-        'Anda sudah pernah mengumpulkan hasil praktikum untuk lab ini.',
+        `Anda sudah mencapai batas maksimal pengumpulan (${lab.maxAttempts} kali).`,
       );
     }
+
+    const nextAttempt = existingSubmissions.length > 0 ? existingSubmissions[0].attemptNumber + 1 : 1;
 
     // Simpan data submission baru dengan status awal "PENDING"
     const submission = await this.prisma.labSubmission.create({
@@ -69,6 +70,7 @@ export class LabSubmissionService {
         fileUrl: data.fileUrl,
         note: data.note,
         status: 'PENDING',
+        attemptNumber: nextAttempt,
       },
     });
 
@@ -98,7 +100,7 @@ export class LabSubmissionService {
     }
 
     // Query seluruh submission untuk lab ini, termasuk data mahasiswa
-    const submissions = await this.prisma.labSubmission.findMany({
+    return this.prisma.labSubmission.findMany({
       where: { labId: labId },
       include: {
         student: {
@@ -109,28 +111,26 @@ export class LabSubmissionService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { studentId: 'asc' },
+        { attemptNumber: 'desc' }
+      ],
     });
-
-    return submissions;
   }
 
   /**
-   * Dosen memberikan nilai dan feedback untuk submission mahasiswa.
-   * Mengubah status dari "PENDING" menjadi "GRADED".
+   * Dosen memberikan nilai (grading) pada submission mahasiswa tertentu.
    */
-  async grade(
+  async gradeSubmission(
     submissionId: string,
     userId: string,
     data: { score: number; feedback?: string },
     userRole?: string,
   ) {
-    // Validasi score harus antara 0 dan 100
     if (data.score < 0 || data.score > 100) {
-      throw new BadRequestException('Score harus antara 0 dan 100.');
+      throw new BadRequestException('Skor harus berada di antara 0 dan 100.');
     }
 
-    // Cek submission ada di database (beserta relasi berantai: submission > lab > course)
     const submission = await this.prisma.labSubmission.findUnique({
       where: { id: submissionId },
       include: {
@@ -141,39 +141,57 @@ export class LabSubmissionService {
     });
 
     if (!submission) {
-      throw new NotFoundException(
-        `Submission dengan ID "${submissionId}" tidak ditemukan`,
-      );
+      throw new NotFoundException('Data submission tidak ditemukan.');
     }
 
-    // Cek bahwa userId adalah dosen pemilik course dari lab tersebut atau admin
-    if (submission.lab.module.course.instructorId !== userId && userRole !== 'ADMIN') {
+    if (
+      submission.lab.module.course.instructorId !== userId &&
+      userRole !== 'ADMIN'
+    ) {
       throw new ForbiddenException(
-        'Hanya dosen pemilik mata kuliah atau Admin yang bisa memberikan nilai.',
+        'Hanya dosen pengampu mata kuliah atau admin yang bisa memberikan nilai.',
       );
     }
 
-    // Update submission: simpan score, feedback, dan ubah status menjadi "GRADED"
-    const updatedSubmission = await this.prisma.labSubmission.update({
+    return this.prisma.labSubmission.update({
       where: { id: submissionId },
       data: {
         score: data.score,
         feedback: data.feedback,
-        status: 'GRADED',
+        status: 'GRADED', // Otomatis ubah status menjadi GRADED setelah dinilai
       },
     });
-
-    return updatedSubmission;
   }
 
+  /**
+   * Mengambil data submission mahasiswa yang sedang login (jika sudah submit).
+   */
   async getMySubmission(labId: string, studentId: string) {
-    return this.prisma.labSubmission.findUnique({
-      where: {
-        labId_studentId: {
-          labId,
-          studentId,
-        },
-      },
+    const lab = await this.prisma.practicalLab.findUnique({
+      where: { id: labId },
     });
+
+    const submissions = await this.prisma.labSubmission.findMany({
+      where: {
+        labId: labId,
+        studentId: studentId,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (submissions.length === 0) return null;
+
+    if (lab?.gradingMethod === 'HIGHEST') {
+      let highest = submissions[0];
+      for (const sub of submissions) {
+        if ((sub.score ?? -1) > (highest.score ?? -1)) {
+          highest = sub;
+        }
+      }
+      return { ...highest, _totalAttempts: submissions.length, _maxAttempts: lab.maxAttempts };
+    }
+
+    // Default LATEST
+    return { ...submissions[0], _totalAttempts: submissions.length, _maxAttempts: lab?.maxAttempts ?? 1 };
   }
 }

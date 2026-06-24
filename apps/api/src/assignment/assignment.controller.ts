@@ -34,6 +34,8 @@ export class AssignmentController {
         templateUrl: { type: 'string' },
         templateName: { type: 'string' },
         submissionRequirement: { type: 'string' },
+        maxAttempts: { type: 'number' },
+        gradingMethod: { type: 'string', enum: ['LATEST', 'HIGHEST'] },
         moduleId: { type: 'string' },
       },
     },
@@ -48,6 +50,8 @@ export class AssignmentController {
       templateUrl?: string;
       templateName?: string;
       submissionRequirement?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
       moduleId: string;
     },
     @Request() req: { user: { id: string; role: string } },
@@ -81,6 +85,8 @@ export class AssignmentController {
         templateUrl: { type: 'string' },
         templateName: { type: 'string' },
         submissionRequirement: { type: 'string' },
+        maxAttempts: { type: 'number' },
+        gradingMethod: { type: 'string', enum: ['LATEST', 'HIGHEST'] },
       },
     },
   })
@@ -95,6 +101,8 @@ export class AssignmentController {
       templateUrl?: string;
       templateName?: string;
       submissionRequirement?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
     @Request() req: any,
   ) {

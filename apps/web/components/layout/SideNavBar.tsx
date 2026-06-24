@@ -99,7 +99,10 @@ export const SideNavBar: React.FC<SideNavBarProps> = ({
         href: coursesHref,
         activePath: coursesPath,
         icon: <CoursesIcon />,
-        children: mode === 'student' ? [{ label: 'My Courses', href: '/courses/my' }] : undefined,
+        children: mode === 'student' ? [
+          { label: 'Katalog Kelas', href: '/courses' },
+          { label: 'My Courses', href: '/courses/my' }
+        ] : undefined,
         matchMode: 'section',
       },
       { label: 'Calendar', href: mode === 'lecturer' ? '/dosen/calendar' : '/calendar', icon: <CalendarIcon />, matchMode: 'section' },

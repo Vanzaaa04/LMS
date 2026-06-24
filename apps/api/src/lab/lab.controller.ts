@@ -30,6 +30,8 @@ export class LabController {
         moduleId: { type: 'string' },
         fileUrl: { type: 'string' },
         fileName: { type: 'string' },
+        maxAttempts: { type: 'number' },
+        gradingMethod: { type: 'string', enum: ['LATEST', 'HIGHEST'] },
       },
       required: ['title', 'instructions', 'moduleId'],
     },
@@ -42,6 +44,8 @@ export class LabController {
       moduleId: string;
       fileUrl?: string;
       fileName?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
     @Request() req: { user: { id: string; role: string } },
   ) {
@@ -68,6 +72,8 @@ export class LabController {
         instructions: { type: 'string' },
         fileUrl: { type: 'string' },
         fileName: { type: 'string' },
+        maxAttempts: { type: 'number' },
+        gradingMethod: { type: 'string', enum: ['LATEST', 'HIGHEST'] },
       },
     },
   })
@@ -79,6 +85,8 @@ export class LabController {
       instructions?: string;
       fileUrl?: string;
       fileName?: string;
+      maxAttempts?: number;
+      gradingMethod?: string;
     },
     @Request() req: { user: { id: string; role: string } },
   ) {

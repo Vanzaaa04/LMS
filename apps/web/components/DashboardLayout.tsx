@@ -43,7 +43,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 z-30">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white text-sm font-bold">R</div>
-          <span className="font-serif font-extrabold text-sm tracking-wide text-blue-800">RUANG DOSEN</span>
+          <span className="font-serif font-extrabold text-sm tracking-wide text-blue-800">AFADIA ACADEMY</span>
         </div>
         <button 
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -74,7 +74,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               R
             </div>
             <div>
-              <h1 className="font-serif font-black text-lg tracking-wider text-blue-900 leading-none">RUANG DOSEN</h1>
+              <h1 className="font-serif font-black text-lg tracking-wider text-blue-900 leading-none">AFADIA ACADEMY</h1>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Online Lab Portal</p>
             </div>
           </div>
@@ -133,7 +133,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Sidebar Footer Branding */}
         <div className="border-t border-slate-100/70 pt-4 text-center">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ruang Dosen v4.2</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AFADIA Academy v4.2</p>
           <p className="text-[9px] text-slate-350 mt-1 font-medium">Universitas Teknik Komputer Indonesia</p>
         </div>
       </aside>

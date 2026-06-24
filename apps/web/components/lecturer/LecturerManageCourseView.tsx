@@ -129,7 +129,7 @@ export function LecturerManageCourseView({ data }: LecturerManageCourseViewProps
               className="inline-flex h-11 items-center gap-2 rounded-xl bg-blue-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800"
             >
               <Plus className="h-4 w-4" />
-              New Module
+              Tambah Bab / Pertemuan
             </button>
           </div>
         </div>
@@ -222,14 +222,14 @@ function EmptyModulesCard({ onCreateModule }: { onCreateModule: () => void }) {
   return (
     <div className="rounded-3xl border-2 border-dashed border-slate-200 bg-white p-10 text-center shadow-sm">
       <BookOpen className="mx-auto mb-3 h-9 w-9 text-slate-300" />
-      <p className="text-sm font-medium text-slate-500">Belum ada modul untuk kelas ini.</p>
+      <p className="text-sm font-medium text-slate-500">Belum ada Bab / Pertemuan untuk kelas ini.</p>
       <button
         type="button"
         onClick={onCreateModule}
         className="mx-auto mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
       >
         <Plus className="h-4 w-4" />
-        Buat Modul Pertama
+        Buat Bab Pertama
       </button>
     </div>
   );
@@ -554,7 +554,7 @@ function AssessmentsSection({
             </span>
             <button
               type="button"
-              onClick={() => onNavigate(`/labs/${slugify(lab.title)}?mode=lecturer`)}
+              onClick={() => onNavigate(`/dosen/courses/${courseId}/modules/${courseModule.id}/labs/${lab.id}/edit`)}
               className="rounded-xl p-2 text-slate-400 transition hover:bg-blue-100 hover:text-blue-700"
               aria-label={`Manage ${lab.title}`}
             >

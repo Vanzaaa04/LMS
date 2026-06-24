@@ -39,6 +39,8 @@ export default async function LecturerEditAssignmentPage({
     const submissionRequirement = formData.get('submissionRequirement') as string;
     const templateName = formData.get('templateName') as string;
     const templateUrl = formData.get('templateUrl') as string;
+    const maxAttempts = parseInt(formData.get('maxAttempts') as string, 10);
+    const gradingMethod = formData.get('gradingMethod') as string;
 
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
@@ -58,6 +60,8 @@ export default async function LecturerEditAssignmentPage({
           submissionRequirement,
           templateName: templateName || undefined,
           templateUrl: templateUrl || undefined,
+          maxAttempts: isNaN(maxAttempts) ? 1 : maxAttempts,
+          gradingMethod,
         },
         token
       );

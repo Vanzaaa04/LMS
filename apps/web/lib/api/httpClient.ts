@@ -41,7 +41,16 @@ export async function apiRequest<ResponseBody>(
       );
     }
 
-    return response.json() as Promise<ResponseBody>;
+    if (response.status === 204) {
+      return null as any;
+    }
+
+    const text = await response.text();
+    if (!text) {
+      return null as any;
+    }
+    
+    return JSON.parse(text) as ResponseBody;
   } finally {
     clearTimeout(timeoutId);
   }

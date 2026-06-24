@@ -63,7 +63,7 @@ export default function AdminCreateUserPage() {
         <header className="top-bar">
           <div>
             <p className="page-title">Tambah Pengguna Baru</p>
-            <p className="page-subtitle">Daftarkan akun baru ke dalam sistem Ruang Dosen</p>
+            <p className="page-subtitle">Daftarkan akun baru ke dalam sistem AFADIA Academy</p>
           </div>
           <div className="top-bar-right">
             <Link href="/dashboard_admin/users" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '12px', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600 }}>
@@ -72,8 +72,8 @@ export default function AdminCreateUserPage() {
           </div>
         </header>
 
-        <div className="dashboard-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-          <div style={{ background: "var(--card-bg)", borderRadius: "var(--radius-xl, 16px)", padding: "32px", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border)", width: '100%', maxWidth: '600px', marginTop: '20px' }}>
+        <div className="dashboard-content">
+          <div style={{ background: "var(--card-bg)", borderRadius: "var(--radius-xl, 16px)", padding: "32px", boxShadow: "var(--shadow-sm)", border: "1px solid var(--border)", width: '100%', maxWidth: '600px', margin: '40px auto' }}>
             
             {error && (
               <div style={{ background: '#FEE2E2', color: '#B91C1C', padding: '16px', borderRadius: '12px', marginBottom: '24px', fontSize: '14px', fontWeight: 600 }}>{error}</div>
@@ -91,7 +91,7 @@ export default function AdminCreateUserPage() {
 
               <div>
                 <label htmlFor="email" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 700 }}>Email / NIM</label>
-                <input type="email" id="email" placeholder="contoh: dosen@kampus.ac.id" value={email} onChange={e => setEmail(e.target.value)} required
+                <input type="text" id="email" placeholder="contoh: dosen@kampus.ac.id atau 2201083000" value={email} onChange={e => setEmail(e.target.value)} required
                   style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', fontSize: '15px' }} />
               </div>
 
