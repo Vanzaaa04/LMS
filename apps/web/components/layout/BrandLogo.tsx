@@ -12,7 +12,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 }) => {
   const content = (
     <>
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-white">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-[#1E3A8A] to-[#2A52BE] text-white">
         <GraduationCapIcon />
       </span>
       <span
@@ -20,7 +20,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           hideTextOnMobile ? 'hidden sm:inline' : ''
         }`}
       >
-        AFADIA<span className="text-[#2563EB]">Academy</span>
+        AFADIA<span className="text-[#2A52BE]">Academy</span>
       </span>
     </>
   );
