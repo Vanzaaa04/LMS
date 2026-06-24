@@ -58,9 +58,9 @@ export class CourseController {
     },
     @Request() req: { user: { id: string; role: string } },
   ): Promise<Course> {
-    // If the user is a LECTURER, they can only create courses for themselves
-    if (req.user.role === 'LECTURER' && (!data.instructorId || data.instructorId !== req.user.id)) {
-      data.instructorId = req.user.id;
+    // Only ADMIN can create courses now. Lecturers should claim existing courses.
+    if (req.user.role === 'LECTURER') {
+      throw new import('@nestjs/common').ForbiddenException('Lecturers are no longer allowed to create courses. Please ask the Admin to create it or claim an available class.');
     }
     return this.courseService.create(data);
   }

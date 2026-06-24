@@ -97,17 +97,7 @@ export default function DashboardPage() {
             <p className="banner-subtitle">Anda memiliki <strong>{stats.pendingSubmissions} tugas mahasiswa</strong> yang menunggu untuk ditinjau hari ini.</p>
           </div>
           <div className="banner-actions">
-            <Link
-              href="/dosen/courses/create"
-              className="btn-primary-white"
-              id="review-submissions-btn"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
-              Buat Course
-            </Link>
+
             <Link
               href="/dosen/courses"
               className="btn-outline-white"
