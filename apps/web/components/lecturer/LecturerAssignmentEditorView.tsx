@@ -474,17 +474,22 @@ function TextInput({
   value,
   onChange,
   placeholder,
+  type = 'text',
+  min,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
+  type?: string;
+  min?: string;
 }) {
   return (
     <input
-      type="text"
+      type={type}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
+      min={min}
       className={LECTURER_COMPACT_CONTROL_CLASSNAME}
       style={{
         borderColor: 'var(--color-border)',

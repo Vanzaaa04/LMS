@@ -1,5 +1,6 @@
 import { MyCoursesCatalogView } from '@/components/course/MyCoursesCatalogView';
 import { getStudentMyCourses } from '@/lib/api/courseRepository';
+import { StudentDashboardLayout } from '@/components/layout/StudentDashboardLayout';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,5 +12,9 @@ export default async function MyCoursesPage({
   const params = await searchParams;
   const courses = await getStudentMyCourses();
 
-  return <MyCoursesCatalogView courses={courses} searchQuery={params.q ?? ''} />;
+  return (
+    <StudentDashboardLayout title="Kursus Saya" activeTab="courses">
+      <MyCoursesCatalogView courses={courses} searchQuery={params.q ?? ''} />
+    </StudentDashboardLayout>
+  );
 }

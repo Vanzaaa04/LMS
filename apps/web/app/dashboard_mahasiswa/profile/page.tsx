@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { buildApiUrl } from "@/lib/api/apiConfig";
+import { StudentDashboardLayout } from "@/components/layout/StudentDashboardLayout";
+import "../dashboard.css";
 import "./profile.css";
 
 /* ──────────────────────────────────────────────
@@ -202,29 +204,34 @@ export default function MahasiswaProfilePage() {
   ─────────────────────────────────────────────── */
   if (loading) {
     return (
-      <div className="profile-page">
-        <div className="profile-loading">
-          <div className="profile-spinner" />
-          <p className="profile-loading-text">Memuat profil mahasiswa…</p>
+      <StudentDashboardLayout title="Profil Saya" activeTab="profile">
+        <div className="profile-page" style={{ display: "flex", justifyContent: "center", minHeight: "60vh" }}>
+          <div className="profile-loading">
+            <div className="profile-spinner" />
+            <p className="profile-loading-text">Memuat profil mahasiswa…</p>
+          </div>
         </div>
-      </div>
+      </StudentDashboardLayout>
     );
   }
 
   if (fetchError || !profile) {
     return (
-      <div className="profile-page">
-        <div className="profile-error-banner">
-          <AlertIcon />
-          {fetchError || "Profil tidak ditemukan."}
+      <StudentDashboardLayout title="Profil Saya" activeTab="profile">
+        <div className="profile-page">
+          <div className="profile-error-banner">
+            <AlertIcon />
+            {fetchError || "Profil tidak ditemukan."}
+          </div>
         </div>
-      </div>
+      </StudentDashboardLayout>
     );
   }
 
   return (
-    <div className="profile-page">
-      {/* ── HERO HEADER ── */}
+    <StudentDashboardLayout title="Profil Saya" activeTab="profile">
+      <div className="profile-page">
+          {/* ── HERO HEADER ── */}
       <section className="profile-hero">
         <div className="profile-hero-dots" />
         <div className="profile-hero-inner">
@@ -748,8 +755,9 @@ export default function MahasiswaProfilePage() {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </StudentDashboardLayout>
   );
 }
 

@@ -11,6 +11,8 @@ export interface ApiLab {
   score?: number | null;
   fileUrl?: string;
   fileName?: string;
+  maxAttempts?: number;
+  gradingMethod?: string;
   createdAt: string;
   updatedAt: string;
 }

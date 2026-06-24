@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { buildApiUrl } from "@/lib/api/apiConfig";
 import { COURSE_CATALOG_HREF } from "@/lib/courseNavigation";
+import { StudentDashboardLayout } from "@/components/layout/StudentDashboardLayout";
 import "./dashboard.css";
 
 interface DashboardUser {
@@ -341,8 +342,53 @@ export default function DashboardMahasiswaPage() {
 
   const ringOffset = RING_CIRCUMFERENCE - (RING_CIRCUMFERENCE * dashboardStats.overallProgress) / 100;
 
+  const rightPanelContent = (
+    <aside className="right-panel">
+      <div className="performance-stats">
+        <MiniStat label="GPA" value={gpa} />
+        <MiniStat label="RANK" value={typeof rank === "number" ? `#${rank}` : rank} />
+      </div>
+
+      <div className="deadlines-card">
+        <div className="deadlines-header">
+          <h3 className="section-title">Deadlines</h3>
+          <button className="icon-btn" title="Filter" type="button">
+            <FilterIcon />
+          </button>
+        </div>
+
+        <ul className="deadlines-list">
+          <li className="deadline-item">
+            <div>
+              <p className="deadline-title">Belum ada deadline</p>
+              <p className="deadline-course">Deadline akan tampil setelah data assignment tersedia dari API.</p>
+            </div>
+          </li>
+        </ul>
+
+        <Link href="/calendar" className="view-calendar-link">
+          View Full Calendar -&gt;
+        </Link>
+      </div>
+
+      <div className="registration-cta">
+        <div className="cta-icon">
+          <BookIcon />
+        </div>
+        <h3 className="cta-title">Registrasi Course</h3>
+        <p className="cta-desc">
+          Pilih course dari katalog utama untuk melihat detail dan melakukan enroll.
+        </p>
+        <div className="cta-buttons">
+          <button className="btn-cta-primary" type="button" onClick={() => router.push(COURSE_CATALOG_HREF)}>Lihat Course</button>
+          <button className="btn-cta-secondary" type="button" onClick={() => router.push("/courses/my")}>My Courses</button>
+        </div>
+      </div>
+    </aside>
+  );
+
   return (
-    <div className="student-dashboard dashboard-content">
+    <StudentDashboardLayout title="Dashboard" activeTab="dashboard" rightPanel={rightPanelContent}>
       <section className="welcome-banner">
         <div className="banner-decoration">
           <div className="banner-circle banner-circle-1" />
@@ -395,7 +441,7 @@ export default function DashboardMahasiswaPage() {
         />
       </section>
 
-      <div className="main-body-layout">
+      <div className="main-body-layout" style={{ gridTemplateColumns: "1fr" }}>
         <section>
           <div className="section-header">
             <h3 className="section-title">Active Courses</h3>
@@ -418,51 +464,8 @@ export default function DashboardMahasiswaPage() {
             )}
           </div>
         </section>
-
-        <aside className="right-panel">
-          <div className="performance-stats">
-            <MiniStat label="GPA" value={gpa} />
-            <MiniStat label="RANK" value={typeof rank === "number" ? `#${rank}` : rank} />
-          </div>
-
-          <div className="deadlines-card">
-            <div className="deadlines-header">
-              <h3 className="section-title">Deadlines</h3>
-              <button className="icon-btn" title="Filter" type="button">
-                <FilterIcon />
-              </button>
-            </div>
-
-            <ul className="deadlines-list">
-              <li className="deadline-item">
-                <div>
-                  <p className="deadline-title">Belum ada deadline</p>
-                  <p className="deadline-course">Deadline akan tampil setelah data assignment tersedia dari API.</p>
-                </div>
-              </li>
-            </ul>
-
-            <Link href="/calendar" className="view-calendar-link">
-              View Full Calendar -&gt;
-            </Link>
-          </div>
-
-          <div className="registration-cta">
-            <div className="cta-icon">
-              <BookIcon />
-            </div>
-            <h3 className="cta-title">Registrasi Course</h3>
-            <p className="cta-desc">
-              Pilih course dari katalog utama untuk melihat detail dan melakukan enroll.
-            </p>
-            <div className="cta-buttons">
-              <button className="btn-cta-primary" type="button" onClick={() => router.push(COURSE_CATALOG_HREF)}>Lihat Course</button>
-              <button className="btn-cta-secondary" type="button" onClick={() => router.push("/courses/my")}>My Courses</button>
-            </div>
-          </div>
-        </aside>
       </div>
-    </div>
+    </StudentDashboardLayout>
   );
 }
 
