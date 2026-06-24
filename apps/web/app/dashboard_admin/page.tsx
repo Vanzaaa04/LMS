@@ -15,6 +15,13 @@ const parseSender = (msg: string) => {
   return { sender: null, body: msg };
 };
 
+const TODAY_PLANS = [
+  { name: "UX Fundamental", time: "09:00 - 10:30 WIB", dot: "teal" },
+  { name: "Review Tugas Mahasiswa", time: "11:00 - 12:00 WIB", dot: "orange" },
+  { name: "Webinar AI in Education", time: "13:00 - 14:30 WIB", dot: "purple" },
+  { name: "Rapat Kurikulum", time: "15:00 - 16:00 WIB", dot: "green" },
+];
+
 export default function DashboardAdminPage() {
   const [coursesOpen, setCoursesOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -278,318 +285,304 @@ export default function DashboardAdminPage() {
         {/* DASHBOARD CONTENT */}
         <div className="dashboard-content">
 
-          {/* WELCOME BANNER */}
+          {/* QUICK SUMMARY BANNER */}
           <section className="welcome-banner">
             <div className="banner-decoration">
               <div className="banner-circle banner-circle-1"></div>
               <div className="banner-circle banner-circle-2"></div>
               <div className="banner-circle banner-circle-3"></div>
               <div className="banner-dots"></div>
+              <div className="banner-sparkle-shape">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 0C50 27.6142 38.8071 50 11.1929 50C38.8071 50 50 72.3858 50 100C50 72.3858 61.1929 50 88.8071 50C61.1929 50 50 27.6142 50 0Z" fill="white" fillOpacity="0.85" />
+                </svg>
+              </div>
+              <div className="banner-sparkle-shape-sm">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 0C50 27.6142 38.8071 50 11.1929 50C38.8071 50 50 72.3858 50 100C50 72.3858 61.1929 50 88.8071 50C61.1929 50 50 27.6142 50 0Z" fill="white" fillOpacity="0.7" />
+                </svg>
+              </div>
             </div>
             <div className="banner-content">
-              <p className="banner-greeting">Panel Administrasi</p>
-              <h2 className="banner-title">Halo, {user?.name || "Admin"}! 👋</h2>
+              <p className="banner-greeting">ADMIN DASHBOARD</p>
+              <h2 className="banner-title">Selamat {new Date().getHours() < 12 ? "Pagi" : new Date().getHours() < 15 ? "Siang" : new Date().getHours() < 18 ? "Sore" : "Malam"}, {user?.name?.split(" ")[0] || "Admin"}! 👋</h2>
               <p className="banner-subtitle">
-                Terdapat <strong>{stats.pendingSubmissions} tugas mahasiswa</strong> yang menunggu persetujuan hari ini.
+                {stats.pendingSubmissions > 0
+                  ? <>Ada <strong>{stats.pendingSubmissions} tugas pending</strong> yang perlu ditinjau hari ini.</>
+                  : <>Semua tugas sudah ditinjau. Platform berjalan dengan baik!</>
+                }
               </p>
             </div>
-            <div className="banner-actions">
-              <button className="btn-primary-white" onClick={() => router.push('/dashboard_admin/courses')}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
-                Tinjau Tugas
-              </button>
-              <button className="btn-outline-white" onClick={() => router.push('/dashboard_admin/users')}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 00-3-3.87" />
-                  <path d="M16 3.13a4 4 0 010 7.75" />
-                </svg>
-                Kelola Pengguna
-              </button>
-            </div>
-          </section>
-
-          {/* STAT CARDS */}
-          <section className="stat-overview">
-            <div className="stat-card">
-              <div className="stat-card-accent accent-teal"></div>
-              <div className="stat-icon-wrap teal">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-                </svg>
+            <div className="banner-stats-row">
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.totalCourses}</span>
+                <span className="banner-stat-mini-label">Kursus</span>
               </div>
-              <div className="stat-body">
-                <p className="stat-label">Total Mata Kuliah</p>
-                <p className="stat-value">{stats.totalCourses}</p>
-                <p className="stat-change neutral">Seluruh Platform</p>
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.totalLecturers}</span>
+                <span className="banner-stat-mini-label">Dosen</span>
               </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-card-accent accent-purple"></div>
-              <div className="stat-icon-wrap purple">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.totalStudents}</span>
+                <span className="banner-stat-mini-label">Mahasiswa</span>
               </div>
-              <div className="stat-body">
-                <p className="stat-label">Total Dosen</p>
-                <p className="stat-value">{stats.totalLecturers}</p>
-                <p className="stat-change neutral">Terdaftar Aktif</p>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-card-accent accent-green"></div>
-              <div className="stat-icon-wrap green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 00-3-3.87" />
-                  <path d="M16 3.13a4 4 0 010 7.75" />
-                </svg>
-              </div>
-              <div className="stat-body">
-                <p className="stat-label">Total Mahasiswa</p>
-                <p className="stat-value">{stats.totalStudents}</p>
-                <p className="stat-change up">Di semua mata kuliah</p>
-              </div>
-            </div>
-
-            <div className="stat-card alert-card">
-              <div className="stat-card-accent accent-orange"></div>
-              <div className="stat-icon-wrap orange">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="12" y1="18" x2="12" y2="12" />
-                  <line x1="9" y1="15" x2="15" y2="15" />
-                </svg>
-              </div>
-              <div className="stat-body">
-                <p className="stat-label">Tugas Pending</p>
-                <p className="stat-value">{stats.pendingSubmissions}</p>
-                <p className="stat-change" style={{ color: "var(--orange)" }}>Perlu ditinjau segera</p>
+              <div className="banner-stat-mini">
+                <span className="banner-stat-mini-value">{stats.pendingSubmissions}</span>
+                <span className="banner-stat-mini-label">Pending</span>
               </div>
             </div>
           </section>
 
-          {/* QUICK ACTIONS */}
-          <section className="quick-actions">
-            <button className="quick-action-btn" onClick={() => router.push('/dashboard_admin/courses/create')}>
-              <div className="quick-action-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-              </div>
-              Buat Mata Kuliah
-            </button>
-            <button className="quick-action-btn" onClick={() => router.push('/dashboard_admin/users/create')}>
-              <div className="quick-action-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" />
-                </svg>
-              </div>
-              Tambah Pengguna
-            </button>
-            <button className="quick-action-btn" onClick={() => router.push('/dashboard_admin/courses')}>
-              <div className="quick-action-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-                </svg>
-              </div>
-              Semua Kursus
-            </button>
-            <button className="quick-action-btn" onClick={() => setNotifOpen(true)}>
-              <div className="quick-action-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                  <path d="M13.73 21a2 2 0 01-3.46 0" />
-                </svg>
-              </div>
-              Kirim Notifikasi
-            </button>
-          </section>
-
-          {/* MAIN BODY */}
-          <div className="main-body-layout">
-
-            {/* Course Management */}
-            <section className="course-management">
-              <div className="section-header">
-                <h3 className="section-title">Manajemen Mata Kuliah</h3>
-                <Link href="/dashboard_admin/courses" className="view-all-link">
-                  Lihat Semua →
-                </Link>
-              </div>
-
-              <div className="course-grid">
-                {courses.length > 0 ? (
-                  courses.map((course, index) => {
-                    const colorVariants = ["teal", "purple", "green"];
-                    const color = colorVariants[index % colorVariants.length];
-                    const fillColors = ["teal", "purple", "green"];
-                    const fillColor = fillColors[index % fillColors.length];
-
-                    return (
-                      <div className="course-card" key={course.id}>
-                        <div className="course-card-top">
-                          <div className={`course-icon-wrap ${color}`}>
-                            {index % 3 === 0 ? (
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-                              </svg>
-                            ) : index % 3 === 1 ? (
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
-                              </svg>
-                            ) : (
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-                              </svg>
-                            )}
-                          </div>
-                          <span className="course-badge">{course.id.substring(0, 8).toUpperCase()}</span>
-                        </div>
-
-                        <h4 className="course-name">{course.title}</h4>
-                        <div className="course-meta">
-                          <span>{course.instructor?.name || course.description?.substring(0, 20) + "..." || "Tanpa deskripsi"}</span>
-                          <span className="course-meta-dot"></span>
-                          <span>{course._count?.enrollments || 0} Mahasiswa</span>
-                        </div>
-
-                        <div className="progress-section" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '8px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: 'var(--text-secondary)' }}>
-                            <span>Total Modul</span>
-                            <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{course._count?.modules || 0} Modul</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: 'var(--text-secondary)' }}>
-                            <span>Kapasitas & SKS</span>
-                            <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{course.enrollmentCap} Siswa · {course.credits} SKS</span>
-                          </div>
-                        </div>
-
-                        <div className="course-actions" style={{ marginTop: '14px' }}>
-                          <button className="btn-filled" style={{ width: '100%' }} onClick={() => router.push(`/dashboard_admin/courses/${course.id}`)}>
-                            Kelola Mata Kuliah
-                          </button>
+          <section className="featured-courses-section">
+            <div className="section-header">
+              <h3 className="section-title">My Course</h3>
+              <Link href="/dashboard_admin/courses" className="see-all-btn-link">
+                See All Courses
+              </Link>
+            </div>
+            <div className="featured-courses-grid">
+              {courses.slice(0, 3).map((course, index) => {
+                const ratings = ["4.6", "4.5", "4.9"];
+                const times = ["19 hr 53 min", "20 hr 22 min", "22 hr 38 min"];
+                const coverGradients = [
+                  "linear-gradient(135deg, #0d9488 0%, #115e59 100%)",
+                  "linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)",
+                  "linear-gradient(135deg, #0284c7 0%, #075985 100%)"
+                ];
+                
+                return (
+                  <div className="featured-course-card" key={course.id} onClick={() => router.push(`/dashboard_admin/courses/${course.id}`)}>
+                    <div className="course-card-banner" style={{ background: coverGradients[index % 3] }}>
+                      <span className="course-card-id-badge">{course.id.substring(0, 8).toUpperCase()}</span>
+                      <div className="course-banner-stars-art">✦</div>
+                    </div>
+                    <div className="course-card-body">
+                      <div className="course-card-meta-row">
+                        <span className="course-card-title-text">{course.title}</span>
+                        <div className="course-card-rating">
+                          <span className="rating-num">{ratings[index % 3]}</span>
+                          <span className="rating-star">★</span>
                         </div>
                       </div>
-                    );
-                  })
-                ) : (
-                  <div style={{ padding: "32px", textAlign: "center", border: "1px dashed var(--teal-border)", borderRadius: "var(--radius-lg)", background: "var(--teal-soft)" }}>
-                    <p style={{ color: "var(--text-muted)", marginBottom: "12px", fontSize: "13px" }}>Belum ada mata kuliah yang tersedia.</p>
-                    <button className="btn-filled" onClick={() => router.push('/dashboard_admin/courses/create')}>
-                      Buat Mata Kuliah Baru
-                    </button>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Recent Submissions Panel */}
-            <aside className="submissions-panel">
-              <div className="panel-header">
-                <div className="section-header">
-                  <h3 className="section-title">Tugas Terbaru</h3>
-                  <Link href="/dashboard_admin/courses" className="view-all-link">
-                    Lihat Semua
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="panel-body">
-                <div className="submission-item">
-                  <div className="submission-top">
-                    <div className="submission-student">
-                      <div className="student-avatar avatar-blue">BS</div>
-                      <span className="student-name">Budi Santoso</span>
+                      <div className="course-card-mentor">
+                        <div className="mentor-avatar">{getInitials(course.instructor?.name || "D")}</div>
+                        <span className="mentor-name">{course.instructor?.name || "Belum Ditentukan"}</span>
+                      </div>
+                      <div className="course-card-progress-bar-wrap">
+                        <div className="progress-bar-track">
+                          <div 
+                            className="progress-bar-fill" 
+                            style={{ 
+                              width: course._count?.enrollments && course.enrollmentCap 
+                                ? `${Math.min(100, Math.round((course._count.enrollments / course.enrollmentCap) * 100))}%` 
+                                : "25%" 
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="course-card-footer">
+                        <div className="footer-meta-item">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /></svg>
+                          <span>{course._count?.modules || 0} Modules</span>
+                        </div>
+                        <div className="footer-meta-item">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                          <span>{times[index % 3]}</span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="submission-time">2j lalu</span>
                   </div>
-                  <p className="submission-title">Binary Tree Implementation</p>
-                  <div className="submission-footer">
-                    <span className="tag tag-blue">Data Structures</span>
-                    <span className="status-badge status-review">Perlu Ditinjau</span>
-                  </div>
-                </div>
+                );
+              })}
+            </div>
+          </section>
 
-                <div className="submission-item">
-                  <div className="submission-top">
-                    <div className="submission-student">
-                      <div className="student-avatar avatar-green">SA</div>
-                      <span className="student-name">Siti Aminah</span>
-                    </div>
-                    <span className="submission-time">4j lalu</span>
-                  </div>
-                  <p className="submission-title">Graph Traversal Essay</p>
-                  <div className="submission-footer">
-                    <span className="tag tag-purple">Algorithm Analysis</span>
-                    <span className="status-badge status-review">Perlu Ditinjau</span>
-                  </div>
-                </div>
-
-                <div className="submission-item">
-                  <div className="submission-top">
-                    <div className="submission-student">
-                      <div className="student-avatar avatar-orange">RF</div>
-                      <span className="student-name">Reza Fahlevi</span>
-                    </div>
-                    <span className="submission-time">Kemarin</span>
-                  </div>
-                  <p className="submission-title">Neural Network Basics</p>
-                  <div className="submission-footer">
-                    <span className="tag tag-pink">Machine Learning</span>
-                    <span className="status-badge status-graded">Sudah Dinilai</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="panel-footer">
-                <Link href="/dashboard_admin/courses" className="view-all-btn">
-                  Lihat Semua Tugas
+          <section className="top-performance-section">
+            <div className="section-header">
+              <h3 className="section-title">Top Performance Course</h3>
+              <div className="section-actions-group">
+                <button className="table-filter-btn" type="button" onClick={() => alert("Filter aktif!")}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
+                  Filter
+                </button>
+                <Link href="/dashboard_admin/courses" className="see-all-btn-link">
+                  See All Courses
                 </Link>
               </div>
-            </aside>
+            </div>
 
+            <div className="performance-table-wrapper">
+              <table className="performance-table">
+                <thead>
+                  <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Level</th>
+                    <th>Mentor</th>
+                    <th>Completion Rate</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCourses.map((course, index) => {
+                    const levels = ["Beginner", "Intermediate", "Advanced", "Expert"];
+                    const levelColors = ["beginner", "intermediate", "advanced", "expert"];
+                    const currentLevel = levels[index % 4];
+                    const currentClass = levelColors[index % 4];
+                    
+                    const completionPct = course._count?.enrollments && course.enrollmentCap
+                      ? Math.min(100, Math.round((course._count.enrollments / course.enrollmentCap) * 100))
+                      : 88 + (index * 3) % 12;
+
+                    return (
+                      <tr key={course.id}>
+                        <td className="col-id">{course.id.substring(0, 8).toUpperCase()}</td>
+                        <td className="col-name">
+                          <span className="course-title-bold">{course.title}</span>
+                          <span className="course-subtitle-light">{course.credits} SKS · {course._count?.modules || 0} Modul</span>
+                        </td>
+                        <td className="col-level">
+                          <span className={`level-pill-badge ${currentClass}`}>{currentLevel}</span>
+                        </td>
+                        <td className="col-mentor">
+                          <div className="mentor-profile-info">
+                            <div className="mentor-avatar-sm">{getInitials(course.instructor?.name || "M")}</div>
+                            <span className="mentor-name-text">{course.instructor?.name || "Belum Ditentukan"}</span>
+                          </div>
+                        </td>
+                        <td className="col-rate">
+                          <span className="completion-pct-text">{completionPct}%</span>
+                        </td>
+                        <td className="col-action">
+                          <div className="action-dots-button-wrap">
+                            <button className="row-ellipsis-btn" type="button" onClick={() => router.push(`/dashboard_admin/courses/${course.id}`)}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <footer className="footer">
+          <p><strong>AFADIA Academy</strong> &copy; 2024 Platform Akademik. All rights reserved.</p>
+          <div className="footer-links">
+            <button onClick={() => alert("Kebijakan Privasi:\n\nSemua data Anda terlindungi dengan enkripsi SSL.")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Kebijakan Privasi</button>
+            <button onClick={() => alert("Syarat Layanan:\n\nDengan menggunakan AFADIA Academy, Anda setuju mematuhi tata tertib kampus.")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Syarat Layanan</button>
+            <button onClick={() => alert("Pusat Bantuan:\n\nEmail: support@afadia.ac.id")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Pusat Bantuan</button>
+            <button onClick={() => alert("Hubungi Support:\n\nEmail: support@afadia.ac.id\nJam: Senin–Jumat 08.00–17.00 WIB")} style={{ background: "none", border: "none", font: "inherit", color: "inherit", cursor: "pointer", padding: 0 }}>Hubungi Support</button>
+          </div>
+        </footer>
+      </main>
+
+      <aside className="right-panel">
+        <div className="right-greeting">
+          <div className="right-greeting-avatar">{getInitials(user?.name)}</div>
+          <div className="right-greeting-text">
+            <p className="right-greeting-name">Good Morning, {user?.name?.split(" ")[0] || "Admin"}! 👋</p>
+            <p className="right-greeting-sub">Focus today, mastery tomorrow.</p>
           </div>
         </div>
 
-        {/* FOOTER */}
-        <footer className="footer">
-<<<<<<< HEAD
-          <p><strong>Ruang Dosen</strong> &copy; 2024 Platform Akademik. All rights reserved.</p>
-=======
-          <p>
-            <strong>AFADIA Academy</strong> &copy; 2024 Platform Akademik. All
-            rights reserved.
-          </p>
->>>>>>> ea0abb3558b2d6f398942e89cc07d001e16ee188
-          <div className="footer-links">
-            <button onClick={() => alert("Kebijakan Privasi:\n\nSemua data Anda terlindungi dengan enkripsi SSL. Kami tidak membagikan data pribadi atau riwayat nilai Anda kepada pihak ketiga mana pun tanpa persetujuan Anda.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Kebijakan Privasi</button>
-            <button onClick={() => alert("Syarat Layanan:\n\nDengan menggunakan AFADIA Academy, Anda setuju untuk menjaga kerahasiaan kredensial login Anda, tidak melakukan kecurangan akademik, dan mematuhi tata tertib kampus.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Syarat Layanan</button>
-            <button onClick={() => alert("Pusat Bantuan:\n\nJika menemui kendala teknis atau kesalahan data, silakan buat laporan ke support@afadia.ac.id atau hubungi helpdesk IT kampus.")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Pusat Bantuan</button>
-            <button onClick={() => alert("Hubungi Support:\n\nEmail: support@afadia.ac.id\nJam Operasional: Senin - Jumat, 08.00 - 17.00 WIB")} style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit', cursor: 'pointer', padding: 0 }}>Hubungi Support</button>
+        <div className="right-stats">
+          <div className="right-stat-item">
+            <div className="right-stat-icon teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+              </svg>
+            </div>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Ongoing Courses</p>
+              <p className="right-stat-value">{stats.totalCourses}</p>
+            </div>
           </div>
-        </footer>
 
-      </main>
+          <div className="right-stat-item">
+            <div className="right-stat-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Total Lecturers</p>
+              <p className="right-stat-value">{stats.totalLecturers}</p>
+            </div>
+          </div>
 
-      {/* Notification Modal */}
+          <div className="right-stat-item">
+            <div className="right-stat-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
+              </svg>
+            </div>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Total Students</p>
+              <p className="right-stat-value">{stats.totalStudents}</p>
+            </div>
+          </div>
+
+          <div className="right-stat-item">
+            <div className="right-stat-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="12" y1="18" x2="12" y2="12" /><line x1="9" y1="15" x2="15" y2="15" />
+              </svg>
+            </div>
+            <div className="right-stat-body">
+              <p className="right-stat-label">Tugas Pending</p>
+              <p className="right-stat-value">{stats.pendingSubmissions}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="right-plans">
+          <div className="right-plans-header">
+            <h3 className="right-plans-title">Schedule</h3>
+            <button className="right-plans-more" type="button" onClick={() => alert("Menu lainnya!")}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg>
+            </button>
+          </div>
+          
+          <div className="calendar-widget-card">
+            <div className="calendar-header-row">
+              <span className="nav-arrow" onClick={() => alert("Bulan sebelumnya!")}>‹</span>
+              <span className="month-year-title">March 2026</span>
+              <span className="nav-arrow" onClick={() => alert("Bulan berikutnya!")}>›</span>
+            </div>
+            <div className="calendar-days-grid">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              <span>1</span><span>2</span><span>3</span><span className="active-day">4</span><span>5</span><span>6</span><span>7</span>
+            </div>
+            <div className="calendar-tabs-row">
+              <span className="tab-pill active">All</span>
+              <span className="tab-pill">UX Fundamental</span>
+              <span className="tab-pill">Webinar</span>
+            </div>
+          </div>
+
+          <div className="today-plans-section">
+            <div className="right-plans-header" style={{ marginTop: "16px", marginBottom: "8px" }}>
+              <h3 className="right-plans-title">Today Plans</h3>
+            </div>
+            <div className="plan-list">
+              {TODAY_PLANS.map((plan, i) => (
+                <div className="plan-item" key={i} onClick={() => alert(`Rencana: ${plan.name}`)}>
+                  <div className={`plan-dot ${plan.dot}`} />
+                  <div className="plan-info">
+                    <p className="plan-name">{plan.name}</p>
+                    <p className="plan-time">{plan.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </aside>
+
       {selectedNotif && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.35)', padding: '20px' }} onClick={() => setSelectedNotif(null)}>
           <div style={{ background: 'white', borderRadius: '18px', maxWidth: '480px', width: '100%', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,114,114,0.15)' }} onClick={e => e.stopPropagation()}>
