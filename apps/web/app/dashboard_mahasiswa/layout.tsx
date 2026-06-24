@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import { AppShell } from '@/components/layout/AppShell';
 
 export default function DashboardMahasiswaLayout({
   children,
@@ -8,7 +7,7 @@ export default function DashboardMahasiswaLayout({
 }) {
   return (
     <Suspense fallback={null}>
-      <AppShell>{children}</AppShell>
+      <>{children}</>
     </Suspense>
   );
 }

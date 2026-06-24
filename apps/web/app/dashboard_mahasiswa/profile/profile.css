@@ -6,10 +6,10 @@
 
 /* --- DESIGN TOKENS --- */
 .profile-page {
-  --primary: #2563EB;
-  --primary-dark: #1D4ED8;
-  --primary-light: #EFF6FF;
-  --primary-hover: #DBEAFE;
+  --primary: #4F97A3;
+  --primary-dark: #3a757e;
+  --primary-light: #e6eff1;
+  --primary-hover: #cce0e3;
 
   --purple: #7C3AED;
   --purple-light: #EDE9FE;
@@ -120,7 +120,7 @@
    HERO HEADER
    ============================================= */
 .profile-hero {
-  background: linear-gradient(135deg, #1E40AF 0%, #2563EB 40%, #7C3AED 100%);
+  background: linear-gradient(135deg, #3a757e 0%, #4F97A3 40%, #7C3AED 100%);
   border-radius: var(--radius-2xl);
   padding: 40px 48px;
   position: relative;
@@ -638,7 +638,7 @@
 .btn-save {
   flex: 1;
   padding: 12px 20px;
-  background: linear-gradient(135deg, var(--primary), var(--purple));
+  background: linear-gradient(135deg, #4F97A3, var(--purple));
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -826,7 +826,7 @@
 .profile-sks-fill {
   height: 100%;
   border-radius: 99px;
-  background: linear-gradient(to right, #3B82F6, #7C3AED);
+  background: linear-gradient(to right, #4F97A3, #7C3AED);
   transition: width 0.8s ease;
 }
 
@@ -937,7 +937,7 @@
    MEMBER SINCE CARD
    ============================================= */
 .profile-since-card {
-  background: linear-gradient(135deg, #1E40AF, #7C3AED);
+  background: linear-gradient(135deg, #3a757e, #7C3AED);
   border-radius: var(--radius-lg);
   padding: 20px;
   color: white;

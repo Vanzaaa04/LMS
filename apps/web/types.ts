@@ -3,6 +3,7 @@ export interface TaskSubmission {
   feedback: string | null;
   status: string; // 'Selesai', 'Menunggu Penilaian'
   fileName: string;
+  fileUrl?: string;
   fileSize: string;
   submittedAt: string;
   studentName?: string;

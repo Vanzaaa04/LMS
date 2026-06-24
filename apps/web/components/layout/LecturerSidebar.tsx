@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEnrollmentStore } from "@/lib/stores/useEnrollmentStore";
 
-interface AdminSidebarProps {
-  activeTab?: "dashboard" | "users" | "courses";
+interface LecturerSidebarProps {
+  activeTab?: "dashboard" | "courses" | "calendar" | "labs";
 }
 
-export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
+export function LecturerSidebar({ activeTab = "dashboard" }: LecturerSidebarProps) {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
 
@@ -25,7 +25,7 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
   }, []);
 
   const getInitials = (name: string) => {
-    if (!name) return "A";
+    if (!name) return "D";
     return name
       .split(" ")
       .map((n) => n[0])
@@ -52,7 +52,7 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
     <aside className="sidebar">
       {/* Logo */}
       <div className="sidebar-header">
-        <div className="logo-icon" style={{ background: "linear-gradient(135deg, #007272, #009e9e)" }}>
+        <div className="logo-icon" style={{ background: "linear-gradient(135deg, #1E3A8A, #2A52BE)" }}>
           <svg
             width="20"
             height="20"
@@ -68,8 +68,8 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
             <path d="M2 12l10 5 10-5" />
           </svg>
         </div>
-        <span className="logo-text">
-          AFADIA<span>Academy</span>
+        <span className="logo-text" style={{ color: "#0F172A" }}>
+          AFADIA<span style={{ color: "#2A52BE" }}>Academy</span>
         </span>
       </div>
 
@@ -78,7 +78,7 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
         <div className="nav-section-label">Main Navigation</div>
         <div className="nav-item">
           <Link
-            href="/dashboard_admin"
+            href="/dashboard_dosen"
             className={`nav-link ${activeTab === "dashboard" ? "active" : ""}`}
           >
             <svg
@@ -99,46 +99,42 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
         </div>
         <div className="nav-item">
           <Link
-            href="/dashboard_admin/users"
-            className={`nav-link ${activeTab === "users" ? "active" : ""}`}
+            href="/dosen/courses"
+            className={`nav-link ${activeTab === "courses" ? "active" : ""}`}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 00-3-3.87" />
-              <path d="M16 3.13a4 4 0 010 7.75" />
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 1h5a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H1V1z" />
+              <path d="M15 1h-5a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h6V1z" />
             </svg>
-            Kelola Pengguna
+            Courses
           </Link>
         </div>
         <div className="nav-item">
           <Link
-            href="/dashboard_admin/courses"
-            className={`nav-link ${activeTab === "courses" ? "active" : ""}`}
+            href="/dosen/calendar"
+            className={`nav-link ${activeTab === "calendar" ? "active" : ""}`}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+            <svg width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="1" y="3" width="16" height="16" rx="2" />
+              <path d="M13 1v4M5 1v4M1 7h16" />
             </svg>
-            Manajemen Mata Kuliah
+            Calendar
+          </Link>
+        </div>
+        <div className="nav-item">
+          <Link
+            href="/labs"
+            className={`nav-link ${activeTab === "labs" ? "active" : ""}`}
+          >
+            <svg width="18" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+            Practical Lab
           </Link>
         </div>
 
-        {/* MOCK NAV GROUP FOR PREMIUM AESTHETIC */}
+        {/* Tools */}
         <div className="nav-section-label">Tools</div>
         <div className="nav-item">
           <span className="nav-link" onClick={() => alert("Fitur Inbox sedang dikembangkan!")}>
@@ -160,35 +156,14 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
             AI Assistant
           </span>
         </div>
-
-        <div className="nav-section-label">Settings</div>
-        <div className="nav-item">
-          <span className="nav-link" onClick={() => alert("Pengaturan Notifikasi sedang dikembangkan!")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-            Notifikasi
-          </span>
-        </div>
-        <div className="nav-item">
-          <span className="nav-link" onClick={() => alert("Pusat Bantuan sedang dikembangkan!")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            Pusat Bantuan
-          </span>
-        </div>
       </nav>
 
       {/* Trial Access Promo Card like SinauHub */}
       <div className="sidebar-upgrade">
         <div className="sidebar-upgrade-icon">🚀</div>
-        <div className="sidebar-upgrade-title">Akses Premium Admin</div>
+        <div className="sidebar-upgrade-title">Akses Premium Dosen</div>
         <div className="sidebar-upgrade-desc">Kelola modul, database, & instruktur tanpa batasan sistem.</div>
-        <button className="sidebar-upgrade-btn" onClick={() => alert("Anda sudah memiliki akses Administrator tertinggi!")}>Aktivasi</button>
+        <button className="sidebar-upgrade-btn" onClick={() => alert("Anda sudah memiliki akses Dosen tertinggi!")}>Aktivasi</button>
       </div>
 
       {/* User card at bottom with Logout */}
@@ -196,9 +171,9 @@ export function AdminSidebar({ activeTab = "dashboard" }: AdminSidebarProps) {
         <div className="user-card" onClick={handleLogout}>
           <div className="user-avatar">{getInitials(user?.name)}</div>
           <div className="user-info">
-            <p className="user-name">{user?.name || "Admin"}</p>
+            <p className="user-name">{user?.name || "Dosen"}</p>
             <p className="user-role">
-              {user?.role === "ADMIN" ? "Administrator" : user?.role || "Admin"}
+              {user?.role === "LECTURER" ? "Dosen Pengajar" : user?.role || "Dosen"}
             </p>
           </div>
           <svg
